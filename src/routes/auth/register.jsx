@@ -1,68 +1,39 @@
-import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { RegisterForm } from '../../components/Forms/RegisterForm';
+import { register } from '../../hooks/auth/register';
 
 export function RenderRegister() {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-        watch,
-    } = useForm();
-
-    const [apiError, setApiError] = useState(null);
-    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const onSubmit = async (data) => {
-        setApiError(null);
-        setSuccess(null);
+    const handleSubmit = async (data) => {
         setIsLoading(true);
+        setError(null);
+
         try {
-            const trimmedData = {
-                username: data.username.trim(),
-                email: data.email.trim(),
-                password: data.password,
-            };
-            const response = await register(trimmedData);
-            setSuccess('Registration successful! Redirecting to login...');
-            reset();
-            console.log('API response:', response);
-            setTimeout(() => {
-                window.location.href = '/login';
-            }, 2000);
+            await register(data);
+            navigate('/login');
         } catch (err) {
-            setApiError(
-                err.message || 'Something went wrong during registration.'
-            );
+            setError(err.message);
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <>
-            <title>Holidaze | Register</title>
-            <h1>Register</h1>
-            <RegisterForm
-                register={register}
-                errors={errors}
-                handleSubmit={handleSubmit}
-                isLoading={isLoading}
-                onSubmit={onSubmit}
-                watch={watch}
-            />
-            {apiError && (
-                <p role="alert" className="error-text">
-                    {apiError}
-                </p>
-            )}
-            {success && (
-                <p role="alert" className="success-text">
-                    {success}
-                </p>
-            )}
-        </>
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8">
+                <h2 className="text-center text-3xl font-bold text-gray-950">
+                    Sign Up
+                </h2>
+                <RegisterForm
+                    onSubmit={handleSubmit}
+                    error={error}
+                    isLoading={isLoading}
+                />
+            </div>
+        </div>
     );
 }
