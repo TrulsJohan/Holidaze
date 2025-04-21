@@ -19,9 +19,6 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 p-6 rounded-lg max-w-md mx-auto">
             <div>
-                <label htmlFor="name" className="block text-white mb-1">
-                    Name
-                </label>
                 <input
                     id="name"
                     type="text"
@@ -37,9 +34,6 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
             </div>
 
             <div>
-                <label htmlFor="email" className="block text-white mb-1">
-                    Email
-                </label>
                 <input
                     id="email"
                     type="email"
@@ -62,9 +56,6 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
             </div>
 
             <div>
-                <label htmlFor="password" className="block text-white mb-1">
-                    Password
-                </label>
                 <input
                     id="password"
                     type="password"
@@ -92,9 +83,6 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                     {...register('venueManager')}
                     className="h-4 w-4 text-blue-500 bg-gray-800 border-gray-700 rounded focus:ring-blue-500"
                 />
-                <label htmlFor="venueManager" className="text-white">
-                    Register as Venue Manager
-                </label>
             </div>
 
             {error && <p className="text-red-500 text-center">{error}</p>}
