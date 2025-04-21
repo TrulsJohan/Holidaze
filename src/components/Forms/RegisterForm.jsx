@@ -1,4 +1,8 @@
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import { LuUser } from 'react-icons/lu';
+import { MdOutlineEmail } from 'react-icons/md';
+import { TbLockPassword } from 'react-icons/tb';
 
 export function RegisterForm({ onSubmit, error, isLoading }) {
     const {
@@ -15,84 +19,97 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
     });
 
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 p-6 rounded-lg max-w-md mx-auto">
-            <div>
-                <input
-                    id="name"
-                    type="text"
-                    {...register('name', { required: 'Name is required' })}
-                    className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
-                    placeholder="Your username"
-                />
-                {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">
-                        {errors.name.message}
-                    </p>
-                )}
-            </div>
+        <>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-6 rounded-lg w-full">
+                <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
+                    <LuUser className="text-2xl text-gray-500" />
+                    <input
+                        id="name"
+                        type="text"
+                        {...register('name', { required: 'Name is required' })}
+                        className="w-full text-gray-900"
+                        placeholder="Name"
+                    />
+                    {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.name.message}
+                        </p>
+                    )}
+                </div>
 
-            <div>
-                <input
-                    id="email"
-                    type="email"
-                    {...register('email', {
-                        required: 'Email is required',
-                        pattern: {
-                            value: /^[a-zA-Z0-9._%+-]+@stud\.noroff\.no$/,
-                            message:
-                                'Email must be a valid @stud.noroff.no address',
-                        },
-                    })}
-                    className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
-                    placeholder="first.last@stud.noroff.no"
-                />
-                {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">
-                        {errors.email.message}
-                    </p>
-                )}
-            </div>
+                <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
+                    <MdOutlineEmail className="text-2xl text-gray-500" />
+                    <input
+                        id="email"
+                        type="email"
+                        {...register('email', {
+                            required: 'Email is required',
+                            pattern: {
+                                value: /^[a-zA-Z0-9._%+-]+@stud\.noroff\.no$/,
+                                message:
+                                    'Email must be a valid @stud.noroff.no address',
+                            },
+                        })}
+                        className="w-full text-gray-900"
+                        placeholder="first.last@stud.noroff.no"
+                    />
+                    {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.email.message}
+                        </p>
+                    )}
+                </div>
 
-            <div>
-                <input
-                    id="password"
-                    type="password"
-                    {...register('password', {
-                        required: 'Password is required',
-                        minLength: {
-                            value: 8,
-                            message: 'Password must be at least 8 characters',
-                        },
-                    })}
-                    className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
-                    placeholder="Enter your password"
-                />
-                {errors.password && (
-                    <p className="text-red-500 text-sm mt-1">
-                        {errors.password.message}
-                    </p>
-                )}
-            </div>
+                <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
+                    <TbLockPassword className="text-2xl text-gray-500" />
+                    <input
+                        id="password"
+                        type="password"
+                        {...register('password', {
+                            required: 'Password is required',
+                            minLength: {
+                                value: 8,
+                                message:
+                                    'Password must be at least 8 characters',
+                            },
+                        })}
+                        className="w-full text-gray-900"
+                        placeholder="Enter your password"
+                    />
+                    {errors.password && (
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.password.message}
+                        </p>
+                    )}
+                </div>
 
-            <div className="flex items-center gap-2">
-                <input
-                    id="venueManager"
-                    type="checkbox"
-                    {...register('venueManager')}
-                    className="h-4 w-4 text-blue-500 bg-gray-800 border-gray-700 rounded focus:ring-blue-500"
-                />
-            </div>
+                <div className="flex flex-row gap-4 items-center">
+                    <input
+                        id="venueManager"
+                        type="checkbox"
+                        {...register('venueManager')}
+                        className="h-8 w-8 rounded-lg bg-gray-100 border border-gray-900 focus:outline-none focus:border-gray-900"
+                    />
+                    <p>Become a Venue Manager and Rent out Venues.</p>
+                </div>
 
-            {error && <p className="text-red-500 text-center">{error}</p>}
+                {error && <p className="text-red-500 text-center">{error}</p>}
 
-            <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400">
-                {isLoading ? 'Registering...' : 'Register'}
-            </button>
-        </form>
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700 disabled:bg-gray-500">
+                    {isLoading ? 'Signing Up...' : 'Sign Up'}
+                </button>
+            </form>
+            <p className='text-center w-full'>
+                Already registered? Go to login{' '}
+                <span>
+                    <Link to={'/login'}>Here</Link>
+                </span>
+            </p>
+        </>
     );
 }
