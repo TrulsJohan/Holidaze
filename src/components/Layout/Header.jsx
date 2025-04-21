@@ -58,7 +58,7 @@ export function Header() {
             </nav>
             {isMenuOpen && (
                 <div
-                    className="absolute top-full left-0 w-full bg-gray-900 text-white z-40 flex flex-col items-center py-4 rounded-b-lg shadow-lg pointer-events-auto"
+                    className="absolute top-full left-0 w-full bg-gray-900 text-white z-50 flex flex-col items-center py-4 rounded-b-lg shadow-lg pointer-events-auto"
                     role="menu">
                     <Link
                         to="/"
