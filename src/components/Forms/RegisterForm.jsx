@@ -28,7 +28,14 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                     <input
                         id="name"
                         type="text"
-                        {...register('name', { required: 'Name is required' })}
+                        {...register('name', {
+                            required: 'Name is required',
+                            pattern: {
+                                value: /^[a-zA-Z0-9_]+$/,
+                                message:
+                                    'Name must contain only letters, numbers, or underscores',
+                            },
+                        })}
                         className="w-full text-gray-900"
                         placeholder="Name"
                     />
@@ -74,6 +81,11 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                                 message:
                                     'Password must be at least 8 characters',
                             },
+                            pattern: {
+                                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+                                message:
+                                    'Password must include uppercase, lowercase, and a number',
+                            },
                         })}
                         className="w-full text-gray-900"
                         placeholder="Enter your password"
@@ -104,7 +116,7 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                     {isLoading ? 'Signing Up...' : 'Sign Up'}
                 </button>
             </form>
-            <p className='text-center w-full'>
+            <p className="text-center w-full">
                 Already registered? Go to login{' '}
                 <span>
                     <Link to={'/login'}>Here</Link>

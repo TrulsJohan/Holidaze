@@ -13,10 +13,12 @@ export function RenderRegister() {
         setError(null);
 
         try {
-            await register(data);
-            navigate('/');
-        } catch (err) {
-            setError(err.message);
+            const result = await register(data);
+            console.log('Registration success:', result);
+            navigate('/login');
+        } catch (error) {
+            console.error('Registration error:', error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }

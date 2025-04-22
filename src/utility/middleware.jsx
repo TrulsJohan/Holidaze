@@ -15,7 +15,7 @@ export async function getAPIKey() {
     try {
         const API_KEY = import.meta.env.VITE_API_KEY;
         if (!API_KEY) {
-            throw new Error('API_KEY not found in environment variables');
+            throw new Error('VITE_API_KEY not found in environment variables');
         }
         return API_KEY;
     } catch (error) {
