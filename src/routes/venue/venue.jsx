@@ -31,7 +31,7 @@ export function RenderVenue() {
     return (
         <>
             <title>Holidaze | {venue ? venue.name : 'Venue'}</title>
-            <div className="min-h-screen bg-gray-100 p-8">
+            <div className="min-h-screen p-8">
                 {loading && (
                     <p className="text-gray-900 text-center">
                         Loading venue...
@@ -39,8 +39,29 @@ export function RenderVenue() {
                 )}
                 {error && <p className="text-red-500 text-center">{error}</p>}
                 {venue && !loading && !error && (
-                    <div className="max-w-3xl mx-auto">
+                    <div className="flex flex-col gap-6 max-w-3xl mx-auto">
                         <VenueCard venue={venue} />
+                        <p className="text-wrap text-sm text-gray-900 w-full">
+                            {venue.description}
+                        </p>
+                        <div className='flex flex-col w-full'>
+                            <div className='bg-gray-700'>
+                                Google Maps
+                            </div>
+                            <div className='flex flex-row border bg-gray-100 border-gray-700 rounded-lg justify-between items-center w-full p-3 gap-6'>
+                                <div className=''>
+                                    <img
+                                        className="rounded-full w-[50px] h-[50px]"
+                                        src={venue.owner.avatar.url}
+                                        alt={venue.owner.avatar.alt}
+                                    />
+                                </div>
+                                <div className='flex flex-col text-xs text-gray-900 overflow-hidden'>
+                                    <p>{venue.owner.name}</p>
+                                    <p>{venue.owner.email}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
                 {!venue && !loading && !error && (
