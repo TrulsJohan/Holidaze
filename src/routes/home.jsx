@@ -1,7 +1,9 @@
 import { getAllVenues } from '../hooks/venue/getVenues';
 import { useState, useEffect, useRef } from 'react';
+import { VenueCard } from '../components/Cards/VenueCard';
 import { FilterForm } from '../components/Forms/FilterForm';
 import { MdOutlineFilterAlt } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 
 export function RenderHome() {
     const [allVenues, setAllVenues] = useState([]);
@@ -123,12 +125,13 @@ export function RenderHome() {
             <title>Holidaze | Home</title>
             <div className="min-h-screen bg-gray-100 p-8">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-semibold text-gray-900">Explore Venues</h1>
+                    <h1 className="text-3xl font-semibold text-gray-900">
+                        Explore Venues
+                    </h1>
                     <div className="relative" ref={filterRef}>
                         <button
                             onClick={() => setShowFilter(!showFilter)}
-                            className="flex items-center gap-2 py-2 px-4 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700"
-                        >
+                            className="flex items-center gap-2 py-2 px-4 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
                             <MdOutlineFilterAlt className="text-xl" />
                             Filter
                         </button>
@@ -142,32 +145,24 @@ export function RenderHome() {
                     </div>
                 </div>
 
-                {loading && <p className="text-gray-900 text-center">Loading venues...</p>}
+                {loading && (
+                    <p className="text-gray-900 text-center">
+                        Loading venues...
+                    </p>
+                )}
                 {error && <p className="text-red-500 text-center">{error}</p>}
 
                 {displayedVenues.length === 0 && !loading && !error && (
-                    <p className="text-gray-900 text-center">No venues available.</p>
+                    <p className="text-gray-900 text-center">
+                        No venues available.
+                    </p>
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {displayedVenues.map((venue) => (
-                        <div
-                            key={venue.id}
-                            className="bg-white rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition"
-                        >
-                            <h2 className="text-xl font-medium text-gray-900">{venue.name}</h2>
-                            {venue.media && venue.media[0] && (
-                                <img
-                                    src={venue.media[0].url}
-                                    alt={venue.media[0].alt || 'Venue image'}
-                                    className="w-full h-48 object-cover rounded-md mt-2"
-                                />
-                            )}
-                            <p className="text-gray-700 mt-2">{venue.description}</p>
-                            <p className="text-gray-900 font-semibold mt-2">${venue.price} / night</p>
-                            <p className="text-gray-600">Max Guests: {venue.maxGuests}</p>
-                            <p className="text-gray-600">Rating: {venue.rating || 'N/A'}</p>
-                        </div>
+                        <Link key={venue.id} to={`/venue/${venue.id}`}>
+                            <VenueCard venue={venue} />
+                        </Link>
                     ))}
                 </div>
 
@@ -176,18 +171,14 @@ export function RenderHome() {
                         <button
                             onClick={() => handlePageChange(page - 1)}
                             disabled={page === 1}
-                            className="py-1 px-3 bg-gray-900 text-gray-50 rounded-lg disabled:bg-gray-500 hover:bg-gray-700"
-                        >
-                        </button>
+                            className="py-1 px-3 bg-gray-900 text-gray-50 rounded-lg disabled:bg-gray-500 hover:bg-gray-700"></button>
                         <span className="text-gray-900">
                             page {page} of {pageCount}
                         </span>
                         <button
                             onClick={() => handlePageChange(page + 1)}
                             disabled={page === pageCount}
-                            className="py-1 px-3 bg-gray-900 text-gray-50 rounded-lg disabled:bg-gray-500 hover:bg-gray-700"
-                        >
-                        </button>
+                            className="py-1 px-3 bg-gray-900 text-gray-50 rounded-lg disabled:bg-gray-500 hover:bg-gray-700"></button>
                     </div>
                 )}
             </div>
