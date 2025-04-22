@@ -13,19 +13,21 @@ export function RenderRegister() {
         setError(null);
 
         try {
-            await register(data);
+            const result = await register(data);
+            console.log('Registration success:', result);
             navigate('/login');
-        } catch (err) {
-            setError(err.message);
+        } catch (error) {
+            console.error('Registration error:', error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
-                <h2 className="text-center text-3xl font-bold text-gray-950">
+        <div className="min-h-screen flex p-8">
+            <div className=" flex flex-col gap-6 w-full">
+                <h2 className="text-2xl font-semibold text-gray-900">
                     Sign Up
                 </h2>
                 <RegisterForm
