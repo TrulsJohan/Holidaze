@@ -45,7 +45,7 @@ export function Header() {
                         Profile
                     </Link>
                     <Link
-                        to="/create-post"
+                        to="/venue/create"
                         className="py-2 px-4 hover:bg-gray-800 w-full text-center"
                         onClick={() => setIsMenuOpen(false)}
                         role="menuitem">
