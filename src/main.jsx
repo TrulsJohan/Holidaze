@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { RenderHome, RenderLogin, RenderRegister, RenderVenue, RenderProfile } from './routes';
+import { RenderHome, RenderLogin, RenderRegister, RenderVenue, RenderProfile, RenderCreateVenue } from './routes';
 
 const router = createBrowserRouter([
     {
@@ -29,6 +29,10 @@ const router = createBrowserRouter([
             {
                 path: '/profile',
                 element: <RenderProfile />
+            },
+            {
+                path: '/venue/create',
+                element: <RenderCreateVenue />
             },
         ],
     },
