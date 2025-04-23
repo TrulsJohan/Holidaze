@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getVenue } from '../../hooks/venue/getVenue';
+import { CreateBookingForm } from '../../components/Forms/CreateBookingForm';
+import { createBooking } from '../../hooks/booking/createBooking';
 import { VenueCard } from '../../components/Cards/VenueCard';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
@@ -16,6 +18,7 @@ export function RenderVenue() {
     const [venue, setVenue] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [bookingError, setBookingError] = useState(null);
     const { id } = useParams();
     const mapRef = useRef(null);
 
@@ -70,13 +73,22 @@ export function RenderVenue() {
         }
     }, [isLoaded, venue]);
 
-    const hasValidLocation =
-        venue && venue.location && venue.location.lat && venue.location.lng;
+    const hasValidLocation = venue && venue.location && venue.location.lat && venue.location.lng;
     const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
 
     if (!mapId) {
         console.error('VITE_GOOGLE_MAPS_MAP_ID is not defined in .env');
     }
+
+    const handleBookingSubmit = async (bookingData) => {
+        setBookingError(null);
+        try {
+            await createBooking(bookingData);
+        } catch (error) {
+            console.error('Error creating booking:', error);
+            setBookingError(error.message || 'Failed to create booking');
+        }
+    };
 
     return (
         <>
@@ -91,6 +103,17 @@ export function RenderVenue() {
                 {venue && !loading && !error && (
                     <div className="flex flex-col gap-6 w-full">
                         <VenueCard venue={venue} />
+                        <div>
+                            <CreateBookingForm
+                                venueId={id}
+                                onSubmit={handleBookingSubmit}
+                            />
+                            {bookingError && (
+                                <p className="text-red-500 text-center mt-4">
+                                    {bookingError}
+                                </p>
+                            )}
+                        </div>
                         <p className="text-wrap text-sm text-gray-900 w-full overflow-hidden">
                             {venue.description}
                         </p>
