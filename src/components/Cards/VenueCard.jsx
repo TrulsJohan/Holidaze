@@ -19,7 +19,7 @@ export function VenueCard({ venue }) {
                             'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-vector%2Fno-image-available&psig=AOvVaw2cUIubb78IsjznXUptlDHE&ust=1745418511936000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJjIk-fs64wDFQAAAAAdAAAAABAE'
                         }
                         alt={venue.media[0].alt || 'Venue image'}
-                        className="w-full h-[240px] object-cover rounded-md mt-2"
+                        className="w-full h-[240px] object-cover rounded-md"
                     />
                 )}
             </div>

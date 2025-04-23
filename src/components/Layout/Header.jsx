@@ -11,7 +11,7 @@ export function Header() {
     };
 
     return (
-        <header className="sticky top-0 bg-transparent">
+        <header className="sticky top-0 bg-transparent z-10">
             <nav className="flex flex-row justify-between items-center py-4 px-8 bg-transparent">
                 <Link to="/">
                     <img src={logo} alt="Holidaze logo" className="" />

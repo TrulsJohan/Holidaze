@@ -26,7 +26,7 @@ export async function getVenue(venueId) {
                     `Could not fetch venue, status: ${response.status}`
             );
         }
-
+        console.log(data);
         return data;
     } catch (error) {
         console.error('Fetch error:', error);
