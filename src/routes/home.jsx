@@ -1,4 +1,4 @@
-import { getAllVenues } from '../hooks/venue/getVenues';
+import { getVenues } from '../hooks/venue/getVenues';
 import { useState, useEffect, useRef } from 'react';
 import { VenueCard } from '../components/Cards/VenueCard';
 import { FilterForm } from '../components/Forms/FilterForm';
@@ -6,51 +6,109 @@ import { MdOutlineFilterAlt } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 export function RenderHome() {
-    const [allVenues, setAllVenues] = useState([]);
+    const [venues, setVenues] = useState([]);
     const [filteredVenues, setFilteredVenues] = useState([]);
     const [page, setPage] = useState(1);
-    const [pageCount, setPageCount] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({});
     const [showFilter, setShowFilter] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const filterRef = useRef(null);
+    const loadMoreRef = useRef(null);
+    const isMounted = useRef(true);
+    const seenVenueIds = useRef(new Set());
     const limit = 20;
 
     useEffect(() => {
+        isMounted.current = true;
         const handleClickOutside = (event) => {
-            if (filterRef.current && !filterRef.current.contains(event.target)) {
+            if (
+                filterRef.current &&
+                !filterRef.current.contains(event.target)
+            ) {
                 setShowFilter(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            isMounted.current = false;
+        };
     }, []);
 
     useEffect(() => {
         const fetchVenues = async () => {
+            if (!hasMore || loading || !isMounted.current) return;
+
             setLoading(true);
             setError(null);
 
             try {
-                const response = await getAllVenues();
-                setAllVenues(response.data || []);
-                setFilteredVenues(response.data || []);
-                setPageCount(Math.ceil((response.data || []).length / limit));
+                const response = await getVenues(page, limit);
+                if (isMounted.current) {
+                    const newVenues = (response.data || []).filter(
+                        (venue) => !seenVenueIds.current.has(venue.id)
+                    );
+                    newVenues.forEach((venue) =>
+                        seenVenueIds.current.add(venue.id)
+                    );
+
+                    setVenues((prev) => [...prev, ...newVenues]);
+                    setFilteredVenues((prev) => [...prev, ...newVenues]);
+                    setHasMore(
+                        response.data.length === limit &&
+                            !response.meta.isLastPage
+                    );
+                }
             } catch (err) {
-                console.error('Error fetching venues:', err);
-                setError(err.message || 'Failed to load venues');
+                if (isMounted.current) {
+                    console.error('Error fetching venues:', err);
+                    setError(err.message || 'Failed to load venues');
+                }
             } finally {
-                setLoading(false);
+                if (isMounted.current) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchVenues();
-    }, []);
+    }, [page, hasMore]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (
+                    entries[0].isIntersecting &&
+                    hasMore &&
+                    !loading &&
+                    isMounted.current
+                ) {
+                    setTimeout(() => {
+                        if (isMounted.current) {
+                            setPage((prev) => prev + 1);
+                        }
+                    }, 500);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (loadMoreRef.current && hasMore) {
+            observer.observe(loadMoreRef.current);
+        }
+
+        return () => {
+            if (loadMoreRef.current) {
+                observer.unobserve(loadMoreRef.current);
+            }
+        };
+    }, [hasMore, loading]);
 
     useEffect(() => {
         const applyFilters = () => {
-            let results = [...allVenues];
+            let results = [...venues];
 
             if (filters.dateFrom && filters.dateTo) {
                 const from = new Date(filters.dateFrom);
@@ -58,16 +116,21 @@ export function RenderHome() {
                 results = results.filter((venue) =>
                     venue.bookings.every(
                         (booking) =>
-                            new Date(booking.dateTo) < from || new Date(booking.dateFrom) > to
+                            new Date(booking.dateTo) < from ||
+                            new Date(booking.dateFrom) > to
                     )
                 );
             }
 
             if (filters.priceFrom) {
-                results = results.filter((venue) => venue.price >= Number(filters.priceFrom));
+                results = results.filter(
+                    (venue) => venue.price >= Number(filters.priceFrom)
+                );
             }
             if (filters.priceTo) {
-                results = results.filter((venue) => venue.price <= Number(filters.priceTo));
+                results = results.filter(
+                    (venue) => venue.price <= Number(filters.priceTo)
+                );
             }
 
             if (filters.location) {
@@ -78,45 +141,53 @@ export function RenderHome() {
             }
 
             if (filters.guests) {
-                results = results.filter((venue) => venue.maxGuests >= Number(filters.guests));
+                results = results.filter(
+                    (venue) => venue.maxGuests >= Number(filters.guests)
+                );
             }
 
             if (filters.wifi) {
                 results = results.filter((venue) => venue.meta.wifi === true);
             }
             if (filters.parking) {
-                results = results.filter((venue) => venue.meta.parking === true);
+                results = results.filter(
+                    (venue) => venue.meta.parking === true
+                );
             }
             if (filters.breakfast) {
-                results = results.filter((venue) => venue.meta.breakfast === true);
+                results = results.filter(
+                    (venue) => venue.meta.breakfast === true
+                );
             }
             if (filters.pets) {
                 results = results.filter((venue) => venue.meta.pets === true);
             }
 
-            setFilteredVenues(results);
-            setPage(1);
-            setPageCount(Math.ceil(results.length / limit));
+            if (isMounted.current) {
+                setFilteredVenues(results);
+            }
         };
 
         applyFilters();
-    }, [filters, allVenues]);
-
-    const displayedVenues = filteredVenues.slice((page - 1) * limit, page * limit);
-
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && newPage <= pageCount) {
-            setPage(newPage);
-        }
-    };
+    }, [filters, venues]);
 
     const handleFilterSubmit = (data) => {
         setFilters(data);
+        setVenues([]);
+        setFilteredVenues([]);
+        setPage(1);
+        setHasMore(true);
+        seenVenueIds.current.clear();
         setShowFilter(false);
     };
 
     const handleFilterClear = () => {
         setFilters({});
+        setVenues([]);
+        setFilteredVenues([]);
+        setPage(1);
+        setHasMore(true);
+        seenVenueIds.current.clear();
         setShowFilter(false);
     };
 
@@ -145,42 +216,39 @@ export function RenderHome() {
                     </div>
                 </div>
 
-                {loading && (
+                {loading && venues.length === 0 && (
                     <p className="text-gray-900 text-center">
                         Loading venues...
                     </p>
                 )}
                 {error && <p className="text-red-500 text-center">{error}</p>}
 
-                {displayedVenues.length === 0 && !loading && !error && (
+                {filteredVenues.length === 0 && !loading && !error && (
                     <p className="text-gray-900 text-center">
                         No venues available.
                     </p>
                 )}
 
                 <div className="flex flex-col gap-8 mt-130">
-                    {displayedVenues.map((venue) => (
+                    {filteredVenues.map((venue) => (
                         <Link key={venue.id} to={`/venue/${venue.id}`}>
                             <VenueCard venue={venue} />
                         </Link>
                     ))}
                 </div>
 
-                {pageCount > 1 && (
-                    <div className="mt-6 flex justify-center items-center gap-4">
-                        <button
-                            onClick={() => handlePageChange(page - 1)}
-                            disabled={page === 1}
-                            className="py-1 px-3 bg-gray-900 text-gray-50 rounded-lg disabled:bg-gray-500 hover:bg-gray-700"></button>
-                        <span className="text-gray-900">
-                            page {page} of {pageCount}
-                        </span>
-                        <button
-                            onClick={() => handlePageChange(page + 1)}
-                            disabled={page === pageCount}
-                            className="py-1 px-3 bg-gray-900 text-gray-50 rounded-lg disabled:bg-gray-500 hover:bg-gray-700"></button>
-                    </div>
-                )}
+                <div ref={loadMoreRef} className="h-10">
+                    {loading && venues.length > 0 && (
+                        <p className="text-gray-900 text-center">
+                            Loading more venues...
+                        </p>
+                    )}
+                    {!hasMore && filteredVenues.length > 0 && (
+                        <p className="text-gray-900 text-center">
+                            No more venues to load.
+                        </p>
+                    )}
+                </div>
             </div>
         </>
     );
