@@ -15,9 +15,6 @@ export async function getVenues(page = 1, limit = 20) {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Noroff-API-Key': API_KEY,
-                    Authorization: `Bearer ${
-                        localStorage.getItem('accessToken') || ''
-                    }`,
                 },
             }
         );
@@ -36,32 +33,5 @@ export async function getVenues(page = 1, limit = 20) {
     } catch (error) {
         console.error('Fetch error:', error);
         throw new Error(`Failed to fetch venues: ${error.message}`);
-    }
-}
-
-export async function getAllVenues() {
-    try {
-        const firstPage = await getVenues(1, 100);
-        const totalCount = firstPage.meta.totalCount || firstPage.data.length;
-        const pageCount = Math.ceil(totalCount / 100);
-
-        const allVenues = [...firstPage.data];
-
-        if (pageCount > 1) {
-            const remainingPages = await Promise.all(
-                Array.from({ length: pageCount - 1 }, (_, i) =>
-                    getVenues(i + 2, 100)
-                )
-            );
-            remainingPages.forEach((page) => allVenues.push(...page.data));
-        }
-
-        return {
-            data: allVenues,
-            meta: { totalCount, pageCount: Math.ceil(totalCount / 100) },
-        };
-    } catch (error) {
-        console.error('Fetch all venues error:', error);
-        throw new Error(`Failed to fetch all venues: ${error.message}`);
     }
 }
