@@ -4,6 +4,7 @@ import { FaCheck } from 'react-icons/fa6';
 import { VenueCard } from '../../components/Cards/VenueCard';
 import { BookingCard } from '../../components/Cards/BookingCard';
 import { Link } from 'react-router-dom';
+import { IoIosSettings } from 'react-icons/io';
 
 export function RenderProfile() {
     const [profile, setProfile] = useState(null);
@@ -69,6 +70,13 @@ export function RenderProfile() {
                             aria-label={profile.banner.alt}></div>
 
                         <div className="bg-white rounded-b-lg shadow-md -mt-16 p-6 relative">
+                            <Link
+                                to={'/profile/update'}
+                                className="absolute right-4 top-4 ">
+                                <div className="rounded-full p-1 hover:bg-gray-300">
+                                    <IoIosSettings className="h-6 w-6" />
+                                </div>
+                            </Link>
                             <div className="absolute -top-12 left-[75px]">
                                 <img
                                     src={profile.avatar.url}
