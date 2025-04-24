@@ -1,9 +1,12 @@
 import { getVenues } from '../hooks/venue/getVenues';
+import { searchVenues } from '../hooks/venue/searchVenues';
 import { useState, useEffect, useRef } from 'react';
 import { VenueCard } from '../components/Cards/VenueCard';
 import { FilterForm } from '../components/Forms/FilterForm';
+import { SearchForm } from '../components/Forms/SearchForm';
 import { MdOutlineFilterAlt } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { debounce } from 'lodash';
 
 export function RenderHome() {
     const [venues, setVenues] = useState([]);
@@ -12,6 +15,7 @@ export function RenderHome() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({});
+    const [searchQuery, setSearchQuery] = useState('');
     const [showFilter, setShowFilter] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const filterRef = useRef(null);
@@ -19,6 +23,19 @@ export function RenderHome() {
     const isMounted = useRef(true);
     const seenVenueIds = useRef(new Set());
     const limit = 20;
+
+    const debouncedSetSearchQuery = useRef(
+        debounce((query) => {
+            if (isMounted.current) {
+                setSearchQuery(query);
+                setVenues([]);
+                setFilteredVenues([]);
+                setPage(1);
+                setHasMore(true);
+                seenVenueIds.current.clear();
+            }
+        }, 300)
+    ).current;
 
     useEffect(() => {
         isMounted.current = true;
@@ -34,6 +51,7 @@ export function RenderHome() {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
             isMounted.current = false;
+            debouncedSetSearchQuery.cancel();
         };
     }, []);
 
@@ -45,7 +63,9 @@ export function RenderHome() {
             setError(null);
 
             try {
-                const response = await getVenues(page, limit);
+                const response = searchQuery
+                    ? await searchVenues(page, limit, searchQuery)
+                    : await getVenues(page, limit);
                 if (isMounted.current) {
                     const newVenues = (response.data || []).filter(
                         (venue) => !seenVenueIds.current.has(venue.id)
@@ -74,7 +94,7 @@ export function RenderHome() {
         };
 
         fetchVenues();
-    }, [page, hasMore]);
+    }, [page, hasMore, searchQuery]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -191,6 +211,10 @@ export function RenderHome() {
         setShowFilter(false);
     };
 
+    const handleSearchChange = (query) => {
+        debouncedSetSearchQuery(query.trim());
+    };
+
     return (
         <>
             <title>Holidaze | Home</title>
@@ -199,7 +223,10 @@ export function RenderHome() {
                     <h1 className="text-3xl font-semibold text-gray-900">
                         Explore Venues
                     </h1>
-                    <div className="relative" ref={filterRef}>
+                    <div
+                        className="relative flex items-center gap-4"
+                        ref={filterRef}>
+                        <SearchForm onChange={handleSearchChange} />
                         <button
                             onClick={() => setShowFilter(!showFilter)}
                             className="flex items-center gap-2 py-2 px-4 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
