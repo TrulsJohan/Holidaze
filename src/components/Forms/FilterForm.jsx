@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { FaLocationDot } from 'react-icons/fa6';
 
 export function FilterForm({ onSubmit, onClear, onClose }) {
     const { register, handleSubmit, reset } = useForm({
@@ -22,60 +23,58 @@ export function FilterForm({ onSubmit, onClear, onClose }) {
     };
 
     return (
-        <div className="absolute top-12 left-0 bg-white p-6 rounded-lg shadow-lg border border-gray-200 z-50 w-80">
+        <div className="absolute top-18 left-0 bg-gray-900 p-2 rounded-lg z-50 w-[256px]">
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-4">
-                <div>
-                    <label className="block text-gray-900 text-sm">
-                        From Date
-                    </label>
-                    <input
-                        type="date"
-                        {...register('dateFrom')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                    />
+                <div className="flex flex-row">
+                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-l-lg border p-2 items-center">
+                        <label className="text-gray-500 w-full">From</label>
+                        <input
+                            type="date"
+                            {...register('dateFrom')}
+                            className="w-full bg-transparent text-gray-900"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-r-lg border p-2 items-center">
+                        <label className="text-gray-500 w-full">To</label>
+                        <input
+                            type="date"
+                            {...register('dateTo')}
+                            className="w-full bg-transparent text-gray-900"
+                        />
+                    </div>
                 </div>
-                <div>
-                    <label className="block text-gray-900 text-sm">
-                        To Date
-                    </label>
-                    <input
-                        type="date"
-                        {...register('dateTo')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                    />
+
+                <div className="flex flex-row">
+                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-l-lg border p-2 items-center">
+                        <label className="text-gray-500 w-full">From</label>
+                        <input
+                            type="number"
+                            min="0"
+                            {...register('priceFrom')}
+                            className="w-full bg-transparent text-gray-900"
+                            placeholder="Min price"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-r-lg border p-2 items-center">
+                        <label className="text-gray-500 w-full">To</label>
+                        <input
+                            type="number"
+                            min="0"
+                            {...register('priceTo')}
+                            className="w-full bg-transparent text-gray-900"
+                            placeholder="Max price"
+                        />
+                    </div>
                 </div>
-                <div>
-                    <label className="block text-gray-900 text-sm">
-                        Price From
-                    </label>
-                    <input
-                        type="number"
-                        min="0"
-                        {...register('priceFrom')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder="Min price"
-                    />
-                </div>
-                <div>
-                    <label className="block text-gray-900 text-sm">
-                        Price To
-                    </label>
-                    <input
-                        type="number"
-                        min="0"
-                        {...register('priceTo')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder="Max price"
-                    />
-                </div>
-                <div>
-                    <label className="block text-gray-900 text-sm">City</label>
+
+                <div className="flex flex-row gap-4 text-sm bg-gray-50 rounded-lg border p-2 items-center">
+                    <FaLocationDot className="text-gray-500" />
                     <input
                         type="text"
                         {...register('location')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                        className="w-full bg-transparent text-gray-900"
                         placeholder="e.g., Oslo"
                     />
                 </div>
@@ -91,7 +90,7 @@ export function FilterForm({ onSubmit, onClear, onClose }) {
                         placeholder="Number of guests"
                     />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 text-gray-50 text-sm">
                     <label className="flex items-center gap-2">
                         <input
                             type="checkbox"
