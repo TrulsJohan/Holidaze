@@ -261,7 +261,7 @@ export function RenderHome() {
                     </p>
                 )}
 
-                <div className="flex flex-col gap-8 mt-130">
+                <div className="flex flex-col gap-8 mt-8">
                     {filteredVenues.map((venue) => (
                         <Link key={venue.id} to={`/venue/${venue.id}`}>
                             <VenueCard venue={venue} />
