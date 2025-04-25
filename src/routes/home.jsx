@@ -219,19 +219,20 @@ export function RenderHome() {
         <>
             <title>Holidaze | Home</title>
             <div className="min-h-screen px-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-semibold text-gray-900">
-                        Explore Venues
+                <div className="flex flex-col justify-between items-center mb-6">
+                    <h1 className='flex flex-col w-full text-[28px] font-light my-6'>
+                        <span className='flex w-full justify-end pr-9'>FIND</span>
+                        <span>VENUES FOR EVERY</span>
+                        <span className='w-full font-medium pl-3'>OCCASION</span>
                     </h1>
                     <div
-                        className="relative flex items-center gap-4"
+                        className="relative flex items-center gap-2 p-2 bg-gray-900 rounded-lg"
                         ref={filterRef}>
                         <SearchForm onChange={handleSearchChange} />
                         <button
                             onClick={() => setShowFilter(!showFilter)}
-                            className="flex items-center gap-2 py-2 px-4 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
-                            <MdOutlineFilterAlt className="text-xl" />
-                            Filter
+                            className="flex items-center p-2 bg-gray-50 text-gray-500 rounded-lg hover:bg-gray-700">
+                            <MdOutlineFilterAlt className="text-2xl" />
                         </button>
                         {showFilter && (
                             <FilterForm

@@ -6,7 +6,7 @@ export function SearchForm({ onChange }) {
     };
 
     return (
-        <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus-within:border-gray-900">
+        <div className="flex flex-row gap-3 w-full p-2 rounded-lg bg-gray-100 border border-gray-700 focus-within:border-gray-900">
             <CiSearch className="text-2xl text-gray-500" />
             <input
                 id="searchQuery"
