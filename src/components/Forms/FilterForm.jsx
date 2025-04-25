@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { FaLocationDot } from 'react-icons/fa6';
 
-export function FilterForm({ onSubmit, onClear, onClose }) {
+export function FilterForm({ onSubmit, onClear }) {
     const { register, handleSubmit, reset } = useForm({
         defaultValues: {
             dateFrom: '',
@@ -27,8 +27,8 @@ export function FilterForm({ onSubmit, onClear, onClose }) {
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-4">
-                <div className="flex flex-row">
-                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-l-lg border p-2 items-center">
+                <div className="flex flex-col">
+                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-t-lg border p-2 items-center">
                         <label className="text-gray-500 w-full">From</label>
                         <input
                             type="date"
@@ -36,7 +36,7 @@ export function FilterForm({ onSubmit, onClear, onClose }) {
                             className="w-full bg-transparent text-gray-900"
                         />
                     </div>
-                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-r-lg border p-2 items-center">
+                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-b-lg border p-2 items-center">
                         <label className="text-gray-500 w-full">To</label>
                         <input
                             type="date"
@@ -79,16 +79,18 @@ export function FilterForm({ onSubmit, onClear, onClose }) {
                     />
                 </div>
                 <div>
-                    <label className="block text-gray-900 text-sm">
-                        Guests
-                    </label>
-                    <input
-                        type="number"
-                        min="1"
+                    <select
                         {...register('guests')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder="Number of guests"
-                    />
+                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-500 text-sm">
+                        <option value="" disabled>
+                            Number of guests
+                        </option>
+                        {[...Array(10)].map((_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                                {i + 1}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="flex flex-col gap-2 text-gray-50 text-sm">
                     <label className="flex items-center gap-2">
@@ -127,7 +129,7 @@ export function FilterForm({ onSubmit, onClear, onClose }) {
                 <div className="flex gap-2">
                     <button
                         type="submit"
-                        className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
+                        className="w-full py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300">
                         Find
                     </button>
                     <button
@@ -138,11 +140,6 @@ export function FilterForm({ onSubmit, onClear, onClose }) {
                     </button>
                 </div>
             </form>
-            <button
-                onClick={onClose}
-                className="absolute top-2 right-2 text-gray-900 hover:text-gray-700">
-                ✕
-            </button>
         </div>
     );
 }
