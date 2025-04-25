@@ -155,8 +155,12 @@ export function RenderHome() {
 
             if (filters.location) {
                 const locationLower = filters.location.toLowerCase();
-                results = results.filter((venue) =>
-                    venue.location.city.toLowerCase().includes(locationLower)
+                results = results.filter(
+                    (venue) =>
+                        venue.location?.city &&
+                        venue.location.city
+                            .toLowerCase()
+                            .includes(locationLower)
                 );
             }
 
