@@ -16,7 +16,7 @@ export function VenueCard({ venue }) {
                     <img
                         src={
                             venue.media[0].url ||
-                            'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-vector%2Fno-image-available&psig=AOvVaw2cUIubb78IsjznXUptlDHE&ust=1745418511936000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJjIk-fs64wDFQAAAAAdAAAAABAE'
+                            'https://via.placeholder.com/400x240?text=No+Image'
                         }
                         alt={venue.media[0].alt || 'Venue image'}
                         className="w-full h-[240px] object-cover rounded-md"
@@ -30,25 +30,15 @@ export function VenueCard({ venue }) {
                     <p className="text-gray-700">{venue.maxGuests}</p>
                 </div>
                 <div className="flex flex-row gap-4 items-center justify-center">
-                    {venue.meta.wifi === true ? (
-                        <FaWifi className="text-gray-700" />
-                    ) : (
-                        <p className="hidden"></p>
-                    )}
-                    {venue.meta.parking === true ? (
+                    {venue.meta.wifi && <FaWifi className="text-gray-700" />}
+                    {venue.meta.parking && (
                         <LuCircleParking className="text-gray-700" />
-                    ) : (
-                        <p className="hidden"></p>
                     )}
-                    {venue.meta.breakfast === true ? (
+                    {venue.meta.breakfast && (
                         <MdFreeBreakfast className="text-gray-700" />
-                    ) : (
-                        <p className="hidden"></p>
                     )}
-                    {venue.meta.pets === true ? (
+                    {venue.meta.pets && (
                         <MdOutlinePets className="text-gray-700" />
-                    ) : (
-                        <p className="hidden"></p>
                     )}
                 </div>
             </div>
@@ -58,7 +48,10 @@ export function VenueCard({ venue }) {
                     {venue.name}
                 </h2>
                 <p className="text-sm text-gray-900 overflow-hidden">
-                    {venue.location.city}, {venue.location.country}
+                    {(venue.location?.city || 'Unknown') +
+                        (venue.location?.country
+                            ? `, ${venue.location.country}`
+                            : '')}
                 </p>
             </div>
             <p className="text-gray-900 font-semibold text-xl my-1 px-2 pb-2">
