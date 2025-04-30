@@ -102,7 +102,7 @@ export function RenderVenue() {
                 {error && <p className="text-red-500 text-center">{error}</p>}
                 {venue && !loading && !error && (
                     <div className="flex flex-col gap-6 w-full">
-                        <VenueCard venue={venue} />
+                        <VenueCard venue={venue} useCarousel={true} />
                         <div>
                             <CreateBookingForm
                                 venueId={id}

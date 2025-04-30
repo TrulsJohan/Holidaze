@@ -24,9 +24,6 @@ export function VenueRating({
                     <span
                         key={`star-${index}`}
                         onClick={() => !readOnly && onRatingChange?.(index + 1)}
-                        onMouseEnter={() =>
-                            !readOnly && setHoveredRating(index + 1)
-                        }
                         className={readOnly ? '' : 'cursor-pointer'}>
                         {isFull || isHalf ? (
                             <LiaStarSolid

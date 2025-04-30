@@ -4,23 +4,29 @@ import { FaWifi } from 'react-icons/fa6';
 import { LuCircleParking } from 'react-icons/lu';
 import { MdFreeBreakfast } from 'react-icons/md';
 import { MdOutlinePets } from 'react-icons/md';
+import { ImageCarousel } from '../UI/ImageCarousel';
 
-export function VenueCard({ venue }) {
+export function VenueCard({ venue, useCarousel = false }) {
     return (
         <div className="rounded-lg hover:shadow-lg transition">
             <div className="relative">
-                <div className="absolute top-4 left-4 bg-gray-900 w-fit p-1 rounded-sm">
+                <div className="absolute top-4 left-4 bg-gray-900 w-fit p-1 rounded-sm z-10">
                     <VenueRating rating={venue.rating || 0} readOnly={true} />
                 </div>
-                {venue.media && venue.media[0] && (
-                    <img
-                        src={
-                            venue.media[0].url ||
-                            'https://via.placeholder.com/400x240?text=No+Image'
-                        }
-                        alt={venue.media[0].alt || 'Venue image'}
-                        className="w-full h-[240px] object-cover rounded-md"
-                    />
+                {useCarousel ? (
+                    <ImageCarousel media={venue.media} />
+                ) : (
+                    venue.media &&
+                    venue.media[0] && (
+                        <img
+                            src={
+                                venue.media[0].url ||
+                                'https://via.placeholder.com/400x240?text=No+Image'
+                            }
+                            alt={venue.media[0].alt || 'Venue image'}
+                            className="w-full h-[240px] object-cover rounded-md"
+                        />
+                    )
                 )}
             </div>
 
