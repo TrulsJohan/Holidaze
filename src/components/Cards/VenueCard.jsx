@@ -24,7 +24,7 @@ export function VenueCard({ venue }) {
                 )}
             </div>
 
-            <div className="flex flex-row justify-between items-center w-full py-2">
+            <div className="flex flex-row justify-between items-center w-full py-2 px-2">
                 <div className="flex flex-row gap-2 items-center justify-center">
                     <FaUser className="text-gray-700" />
                     <p className="text-gray-700">{venue.maxGuests}</p>
@@ -53,15 +53,15 @@ export function VenueCard({ venue }) {
                 </div>
             </div>
 
-            <div className='flex flex-col py-2 gap-1 w-full'>
+            <div className="flex flex-col py-2 gap-1 w-full px-2">
                 <h2 className="text-xl text-gray-900 overflow-hidden text-nowrap">
                     {venue.name}
                 </h2>
-                <p className='text-sm text-gray-900 overflow-hidden'>
+                <p className="text-sm text-gray-900 overflow-hidden">
                     {venue.location.city}, {venue.location.country}
                 </p>
             </div>
-            <p className="text-gray-900 font-semibold text-xl my-1">
+            <p className="text-gray-900 font-semibold text-xl my-1 px-2 pb-2">
                 {venue.price} Kr
             </p>
         </div>
