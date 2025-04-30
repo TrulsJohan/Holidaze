@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { IoIosMenu } from 'react-icons/io';
+import { HiOutlineMenu } from 'react-icons/hi';
+import { HiOutlineMenuAlt1 } from 'react-icons/hi';
 import { LoginButton } from '../Buttons/LoginButton';
 import logo from '../../assets/HD.svg';
 
@@ -29,7 +30,11 @@ export function Header() {
                         aria-label="Toggle navigation menu"
                         aria-expanded={isMenuOpen}
                         className="focus:outline-none p-1 rounded-full">
-                        <IoIosMenu className="text-2xl text-white" />
+                        {!isMenuOpen === true ? (
+                            <HiOutlineMenu className="text-2xl text-white" />
+                        ) : (
+                            <HiOutlineMenuAlt1 className="text-2xl text-white" />
+                        )}
                     </button>
                 </div>
             </nav>
