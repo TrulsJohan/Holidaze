@@ -1,20 +1,26 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { IoIosMenu } from 'react-icons/io';
+import { LoginButton } from '../Buttons/LoginButton';
 import logo from '../../assets/HD.svg';
 
 export function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const location = useLocation();
 
     const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
+        setIsMenuOpen((prev) => !prev);
     };
 
     return (
-        <header className="sticky top-0 bg-transparent z-10">
-            <nav className="flex flex-row justify-between items-center py-4 px-8 bg-transparent">
+        <header className="sticky top-0 backdrop-blur-sm z-10">
+            <nav className="flex flex-row justify-between items-center py-4 px-8">
                 <Link to="/">
-                    <img src={logo} alt="Holidaze logo" className="" />
+                    <img
+                        src={logo}
+                        alt="Holidaze logo"
+                        className="h-8 w-auto"
+                    />
                 </Link>
                 <div className="bg-gray-900 p-1 rounded-full">
                     <button
@@ -34,30 +40,37 @@ export function Header() {
                         to="/"
                         className="py-2 px-4 hover:bg-gray-800 w-full text-center"
                         onClick={() => setIsMenuOpen(false)}
-                        role="menuitem">
+                        role="menuitem"
+                        aria-current={
+                            location.pathname === '/' ? 'page' : undefined
+                        }>
                         Home
                     </Link>
                     <Link
                         to="/profile"
                         className="py-2 px-4 hover:bg-gray-800 w-full text-center"
                         onClick={() => setIsMenuOpen(false)}
-                        role="menuitem">
+                        role="menuitem"
+                        aria-current={
+                            location.pathname === '/profile'
+                                ? 'page'
+                                : undefined
+                        }>
                         Profile
                     </Link>
                     <Link
                         to="/venue/create"
                         className="py-2 px-4 hover:bg-gray-800 w-full text-center"
                         onClick={() => setIsMenuOpen(false)}
-                        role="menuitem">
+                        role="menuitem"
+                        aria-current={
+                            location.pathname === '/venue/create'
+                                ? 'page'
+                                : undefined
+                        }>
                         Create Post
                     </Link>
-                    <Link
-                        to="/login"
-                        className="py-2 px-4 hover:bg-gray-800 w-full text-center"
-                        onClick={() => setIsMenuOpen(false)}
-                        role="menuitem">
-                        Login
-                    </Link>
+                    <LoginButton onClose={() => setIsMenuOpen(false)} />
                 </div>
             )}
         </header>
