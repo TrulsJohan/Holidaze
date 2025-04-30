@@ -1,62 +1,37 @@
-import { LiaStar, LiaStarHalf, LiaStarSolid } from 'react-icons/lia';
-import { useState } from 'react';
+import { LiaStar, LiaStarSolid } from 'react-icons/lia';
 
 export function VenueRating({
     rating,
     maxRating = 5,
-    size = 16,
+    size = 20,
     className = '',
     readOnly = false,
     onRatingChange,
 }) {
-    const [hoveredRating, setHoveredRating] = useState(null);
-    const clampedRating = Math.max(0, Math.min(maxRating, rating));
+    const safeRating = isNaN(rating) || rating == null ? 0 : Number(rating);
+    const clampedRating = Math.max(0, Math.min(maxRating, safeRating));
 
-    const handleStarClick = (starIndex) => {
-        if (readOnly || !onRatingChange) return;
-        onRatingChange(starIndex + 1);
-    };
-
-    const handleStarHover = (starIndex) => {
-        if (readOnly) return;
-        setHoveredRating(starIndex + 1);
-    };
-
-    const handleMouseLeave = () => {
-        if (readOnly) return;
-        setHoveredRating(null);
-    };
-
-    const displayRating =
-        hoveredRating !== null ? hoveredRating : clampedRating;
-    const displayFullStars = Math.floor(displayRating);
-    const displayHasHalfStar = displayRating % 1 >= 0.5;
+    const fullStars = Math.floor(clampedRating);
+    const hasHalfStar = clampedRating % 1 >= 0.5;
 
     return (
-        <div
-            className={`flex items-center ${className}`}
-            onMouseLeave={handleMouseLeave}>
+        <div className={`flex items-center ${className}`}>
             {Array.from({ length: maxRating }, (_, index) => {
-                const isFull = index < displayFullStars;
-                const isHalf =
-                    !isFull && index === displayFullStars && displayHasHalfStar;
+                const isFull = index < fullStars;
+                const isHalf = !isFull && index === fullStars && hasHalfStar;
 
                 return (
                     <span
                         key={`star-${index}`}
-                        onClick={() => handleStarClick(index)}
-                        onMouseEnter={() => handleStarHover(index)}
+                        onClick={() => !readOnly && onRatingChange?.(index + 1)}
+                        onMouseEnter={() =>
+                            !readOnly && setHoveredRating(index + 1)
+                        }
                         className={readOnly ? '' : 'cursor-pointer'}>
-                        {isFull ? (
+                        {isFull || isHalf ? (
                             <LiaStarSolid
                                 size={size}
-                                className="text-gray-100 fill-current"
-                            />
-                        ) : isHalf ? (
-                            <LiaStarHalf
-                                size={size}
                                 className="text-gray-100"
-                                style={{ clipPath: 'inset(0 50% 0 0)' }}
                             />
                         ) : (
                             <LiaStar size={size} className="text-gray-100" />
