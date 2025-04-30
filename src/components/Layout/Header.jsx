@@ -7,6 +7,7 @@ import logo from '../../assets/HD.svg';
 export function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
+    const token = localStorage.getItem('accessToken');
 
     const toggleMenu = () => {
         setIsMenuOpen((prev) => !prev);
@@ -19,7 +20,7 @@ export function Header() {
                     <img
                         src={logo}
                         alt="Holidaze logo"
-                        className="h-8 w-auto"
+                        className="h-6 w-auto"
                     />
                 </Link>
                 <div className="bg-gray-900 p-1 rounded-full">
@@ -46,30 +47,36 @@ export function Header() {
                         }>
                         Home
                     </Link>
-                    <Link
-                        to="/profile"
-                        className="py-2 px-4 hover:bg-gray-800 w-full text-center"
-                        onClick={() => setIsMenuOpen(false)}
-                        role="menuitem"
-                        aria-current={
-                            location.pathname === '/profile'
-                                ? 'page'
-                                : undefined
-                        }>
-                        Profile
-                    </Link>
-                    <Link
-                        to="/venue/create"
-                        className="py-2 px-4 hover:bg-gray-800 w-full text-center"
-                        onClick={() => setIsMenuOpen(false)}
-                        role="menuitem"
-                        aria-current={
-                            location.pathname === '/venue/create'
-                                ? 'page'
-                                : undefined
-                        }>
-                        Create Post
-                    </Link>
+                    {!token ? (
+                        <></>
+                    ) : (
+                        <div className="flex flex-col items-center">
+                            <Link
+                                to="/profile"
+                                className="py-2 px-4 hover:bg-gray-800 w-full text-center"
+                                onClick={() => setIsMenuOpen(false)}
+                                role="menuitem"
+                                aria-current={
+                                    location.pathname === '/profile'
+                                        ? 'page'
+                                        : undefined
+                                }>
+                                Profile
+                            </Link>
+                            <Link
+                                to="/venue/create"
+                                className="py-2 px-4 hover:bg-gray-800 w-full text-center"
+                                onClick={() => setIsMenuOpen(false)}
+                                role="menuitem"
+                                aria-current={
+                                    location.pathname === '/venue/create'
+                                        ? 'page'
+                                        : undefined
+                                }>
+                                Create Post
+                            </Link>
+                        </div>
+                    )}
                     <LoginButton onClose={() => setIsMenuOpen(false)} />
                 </div>
             )}
