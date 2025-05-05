@@ -34,6 +34,7 @@ export function RenderVenue() {
 
             try {
                 const response = await getVenue(id);
+                console.log('RenderVenue venue data:', response.data);
                 setVenue(response.data);
             } catch (error) {
                 console.error('Error fetching venue:', error);
@@ -73,7 +74,8 @@ export function RenderVenue() {
         }
     }, [isLoaded, venue]);
 
-    const hasValidLocation = venue && venue.location && venue.location.lat && venue.location.lng;
+    const hasValidLocation =
+        venue && venue.location && venue.location.lat && venue.location.lng;
     const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
 
     if (!mapId) {
@@ -107,6 +109,8 @@ export function RenderVenue() {
                             <CreateBookingForm
                                 venueId={id}
                                 onSubmit={handleBookingSubmit}
+                                bookings={venue.bookings}
+                                maxGuests={venue.maxGuests}
                             />
                             {bookingError && (
                                 <p className="text-red-500 text-center mt-4">
