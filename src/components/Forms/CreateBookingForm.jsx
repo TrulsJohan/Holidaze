@@ -96,79 +96,75 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">
-                Book This Venue
-            </h2>
+        <div className="">
             {success && (
                 <p className="text-green-500 text-center mb-4">{success}</p>
             )}
             <form
                 onSubmit={handleSubmit(onFormSubmit)}
-                className="flex flex-col gap-4">
-                <div>
-                    <label className="block text-gray-900 text-sm font-medium">
-                        Select Date Range *
-                    </label>
-                    <Controller
-                        name="dateRange"
-                        control={control}
-                        rules={{ validate: validateDateRange }}
-                        render={({ field }) => (
-                            <DateRange
-                                editableDateInputs={true}
-                                onChange={(item) => {
-                                    setRange([item.selection]);
-                                    field.onChange(item.selection);
-                                }}
-                                moveRangeOnFirstSelection={false}
-                                ranges={range}
-                                disabledDates={disabledDates}
-                                minDate={new Date()}
-                                className="w-full border border-gray-700 rounded-lg overflow-scroll"
-                            />
+                className="flex flex-col">
+                <div className="rounded-lg shadow-md mt-4">
+                    <div>
+                        <Controller
+                            name="dateRange"
+                            control={control}
+                            rules={{ validate: validateDateRange }}
+                            render={({ field }) => (
+                                <DateRange
+                                    editableDateInputs={true}
+                                    onChange={(item) => {
+                                        setRange([item.selection]);
+                                        field.onChange(item.selection);
+                                    }}
+                                    moveRangeOnFirstSelection={false}
+                                    ranges={range}
+                                    disabledDates={disabledDates}
+                                    minDate={new Date()}
+                                    className="w-full border border-gray-700 rounded-t-lg overflow-scroll"
+                                />
+                            )}
+                        />
+                        {errors.dateRange && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errors.dateRange.message}
+                            </p>
                         )}
-                    />
-                    {errors.dateRange && (
-                        <p className="text-red-500 text-xs mt-1">
-                            {errors.dateRange.message}
-                        </p>
-                    )}
+                    </div>
+                    <div>
+                        <select
+                            {...register('guests', {
+                                required: 'Number of guests is required',
+                                min: {
+                                    value: 1,
+                                    message: 'Must be at least 1 guest',
+                                },
+                                max: {
+                                    value: maxGuests,
+                                    message: `Maximum ${maxGuests} guests allowed`,
+                                },
+                            })}
+                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-b-lg text-gray-500 text-sm">
+                            <option value="" disabled>
+                                Number of guests
+                            </option>
+                            {Array.from({ length: maxGuests }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {i + 1}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.guests && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errors.guests.message}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
-                <div>
-                    <label className="block text-gray-900 text-sm font-medium">
-                        Number of Guests *
-                    </label>
-                    <input
-                        type="number"
-                        min="1"
-                        max={maxGuests}
-                        {...register('guests', {
-                            required: 'Number of guests is required',
-                            min: {
-                                value: 1,
-                                message: 'Must be at least 1 guest',
-                            },
-                            max: {
-                                value: maxGuests,
-                                message: `Maximum ${maxGuests} guests allowed`,
-                            },
-                        })}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder="Number of guests"
-                    />
-                    {errors.guests && (
-                        <p className="text-red-500 text-xs mt-1">
-                            {errors.guests.message}
-                        </p>
-                    )}
-                </div>
-
-                <div className="flex gap-2">
+                <div className="flex gap-2 bg-gray-900 p-2 rounded-lg shadow-md mt-4">
                     <button
                         type="submit"
-                        className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
+                        className="w-full py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200">
                         Book Now
                     </button>
                     <button
@@ -183,8 +179,8 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                                 },
                             ]);
                         }}
-                        className="w-full py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300">
-                        Reset
+                        className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
+                        Clear
                     </button>
                 </div>
             </form>

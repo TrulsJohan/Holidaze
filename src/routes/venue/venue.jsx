@@ -75,7 +75,7 @@ export function RenderVenue() {
                         <div className="flex flex-col w-full border border-gray-900 rounded-lg">
                             <GoogleMap venue={venue} />
                             <div className="flex flex-row bg-gray-100 rounded-b-lg justify-between items-center w-full p-3 gap-6">
-                                <div>
+                                <div className='w-[80px]'>
                                     <img
                                         className="rounded-full w-[50px] h-[50px]"
                                         src={venue.owner.avatar.url}
@@ -85,7 +85,7 @@ export function RenderVenue() {
                                         }
                                     />
                                 </div>
-                                <div className="flex flex-col text-xs text-gray-900 overflow-hidden">
+                                <div className="flex flex-col w-full text-xs text-gray-900 overflow-hidden">
                                     <p>{venue.owner.name}</p>
                                     <p>{venue.owner.email}</p>
                                 </div>
