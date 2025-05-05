@@ -15,7 +15,7 @@ export function Header() {
     };
 
     return (
-        <header className="sticky top-0 backdrop-blur-sm z-10">
+        <header className="sticky top-0 backdrop-blur-sm z-20">
             <nav className="flex flex-row justify-between items-center py-4 px-8">
                 <Link to="/">
                     <img
