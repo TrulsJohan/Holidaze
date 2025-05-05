@@ -1,18 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getVenue } from '../../hooks/venue/getVenue';
 import { CreateBookingForm } from '../../components/Forms/CreateBookingForm';
 import { createBooking } from '../../hooks/booking/createBooking';
 import { VenueCard } from '../../components/Cards/VenueCard';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
-
-const mapContainerStyle = {
-    width: '100%',
-    height: '240px',
-    borderRadius: '8px',
-};
-
-const libraries = ['marker'];
+import GoogleMap from '../../components/UI/GoogleMaps';
 
 export function RenderVenue() {
     const [venue, setVenue] = useState(null);
@@ -20,12 +12,6 @@ export function RenderVenue() {
     const [loading, setLoading] = useState(false);
     const [bookingError, setBookingError] = useState(null);
     const { id } = useParams();
-    const mapRef = useRef(null);
-
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-        libraries,
-    });
 
     useEffect(() => {
         const fetchVenue = async () => {
@@ -46,41 +32,6 @@ export function RenderVenue() {
 
         fetchVenue();
     }, [id]);
-
-    useEffect(() => {
-        if (
-            isLoaded &&
-            mapRef.current &&
-            venue &&
-            venue.location &&
-            venue.location.lat &&
-            venue.location.lng
-        ) {
-            const map = mapRef.current;
-            const position = {
-                lat: venue.location.lat,
-                lng: venue.location.lng,
-            };
-            console.log('Creating AdvancedMarkerElement at:', position);
-            console.log(
-                'Map ID used:',
-                import.meta.env.VITE_GOOGLE_MAPS_MAP_ID
-            );
-
-            new google.maps.marker.AdvancedMarkerElement({
-                map,
-                position,
-            });
-        }
-    }, [isLoaded, venue]);
-
-    const hasValidLocation =
-        venue && venue.location && venue.location.lat && venue.location.lng;
-    const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
-
-    if (!mapId) {
-        console.error('VITE_GOOGLE_MAPS_MAP_ID is not defined in .env');
-    }
 
     const handleBookingSubmit = async (bookingData) => {
         setBookingError(null);
@@ -122,36 +73,7 @@ export function RenderVenue() {
                             {venue.description}
                         </p>
                         <div className="flex flex-col w-full">
-                            {hasValidLocation && isLoaded && mapId ? (
-                                <GoogleMap
-                                    mapContainerStyle={mapContainerStyle}
-                                    center={{
-                                        lat: venue.location.lat,
-                                        lng: venue.location.lng,
-                                    }}
-                                    zoom={15}
-                                    onLoad={(map) => {
-                                        console.log(
-                                            'Map loaded with mapId:',
-                                            mapId
-                                        );
-                                        mapRef.current = map;
-                                    }}
-                                    mapId={mapId}
-                                />
-                            ) : hasValidLocation && !isLoaded ? (
-                                <div className="bg-gray-200 p-4 rounded-md text-center text-gray-600">
-                                    Loading map...
-                                </div>
-                            ) : hasValidLocation && !mapId ? (
-                                <div className="bg-gray-200 p-4 rounded-md text-center text-gray-600">
-                                    Map configuration error: Missing Map ID
-                                </div>
-                            ) : (
-                                <div className="bg-gray-200 p-4 rounded-md text-center text-gray-600">
-                                    Location not available
-                                </div>
-                            )}
+                            <GoogleMap venue={venue} />
                             <div className="flex flex-row border-b border-r border-l bg-gray-100 border-gray-700 rounded-b-lg justify-between items-center w-full p-3 gap-6">
                                 <div>
                                     <img
