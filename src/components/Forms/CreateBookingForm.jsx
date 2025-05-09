@@ -1,14 +1,13 @@
 import { useForm, Controller } from 'react-hook-form';
 import { useState, useEffect } from 'react';
-import { DateRange } from 'react-date-range';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
     addDays,
     eachDayOfInterval,
     isWithinInterval,
     parseISO,
 } from 'date-fns';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
 
 export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
     const {
@@ -28,30 +27,24 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
     });
 
     const [success, setSuccess] = useState(null);
-    const [range, setRange] = useState([
-        {
-            startDate: null,
-            endDate: null,
-            key: 'selection',
-        },
-    ]);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
-    const disabledDates = bookings
-        ? bookings
-              .map((booking) => {
-                  const start = parseISO(booking.dateFrom);
-                  const end = parseISO(booking.dateTo);
-                  return eachDayOfInterval({ start, end });
-              })
-              .flat()
+    const disabledDateIntervals = bookings
+        ? bookings.map((booking) => ({
+              start: parseISO(booking.dateFrom),
+              end: parseISO(booking.dateTo),
+          }))
         : [];
 
     useEffect(() => {
-        if (range[0].startDate && range[0].endDate) {
-            setValue('dateFrom', range[0].startDate.toISOString());
-            setValue('dateTo', range[0].endDate.toISOString());
+        if (startDate) {
+            setValue('dateFrom', startDate.toISOString());
         }
-    }, [range, setValue]);
+        if (endDate) {
+            setValue('dateTo', endDate.toISOString());
+        }
+    }, [startDate, endDate, setValue]);
 
     const onFormSubmit = async (data) => {
         const formattedData = {
@@ -66,7 +59,8 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
             await onSubmit(formattedData);
             setSuccess('Booking created successfully!');
             reset();
-            setRange([{ startDate: null, endDate: null, key: 'selection' }]);
+            setStartDate(null);
+            setEndDate(null);
             setTimeout(() => setSuccess(null), 3000);
         } catch (error) {
             setSuccess(null);
@@ -74,19 +68,22 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
     };
 
     const validateDateRange = () => {
-        if (!range[0].startDate || !range[0].endDate) {
+        if (!startDate || !endDate) {
             return 'Please select a valid date range';
         }
-        if (range[0].startDate >= range[0].endDate) {
+        if (startDate >= endDate) {
             return 'Check-out date must be after check-in date';
         }
         const selectedDates = eachDayOfInterval({
-            start: range[0].startDate,
-            end: range[0].endDate,
+            start: startDate,
+            end: endDate,
         });
         const isBooked = selectedDates.some((date) =>
-            disabledDates.some(
-                (disabled) => disabled.toDateString() === date.toDateString()
+            disabledDateIntervals.some((interval) =>
+                isWithinInterval(date, {
+                    start: interval.start,
+                    end: interval.end,
+                })
             )
         );
         if (isBooked) {
@@ -104,24 +101,59 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                 onSubmit={handleSubmit(onFormSubmit)}
                 className="flex flex-col">
                 <div className="rounded-lg shadow-md mt-4">
-                    <div>
+                    <div className="w-full h-full p-2 bg-gray-900 rounded-t-lg">
+                        <style jsx>{`
+                            .react-datepicker,
+                            .react-datepicker__month-container {
+                                width: 100% !important;
+                                height: 100% !important;
+                            }
+                            .react-datepicker__month {
+                                height: 100%;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: space-between;
+                            }
+                            .react-datepicker__week,
+                            .react-datepicker__day-names {
+                                display: flex;
+                                justify-content: space-between;
+                            }
+                            .react-datepicker__day,
+                            .react-datepicker__day-name {
+                                flex: 1;
+                                text-align: center;
+                            }
+                        `}</style>
                         <Controller
                             name="dateRange"
                             control={control}
                             rules={{ validate: validateDateRange }}
                             render={({ field }) => (
-                                <DateRange
-                                    editableDateInputs={true}
-                                    onChange={(item) => {
-                                        setRange([item.selection]);
-                                        field.onChange(item.selection);
-                                    }}
-                                    moveRangeOnFirstSelection={false}
-                                    ranges={range}
-                                    disabledDates={disabledDates}
-                                    minDate={new Date()}
-                                    className="w-full border border-gray-700 rounded-t-lg overflow-scroll"
-                                />
+                                <div className="flex w-full h-full items-center justify-center">
+                                    <DatePicker
+                                        selectsRange
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        onChange={(dates) => {
+                                            const [start, end] = dates;
+                                            setStartDate(start);
+                                            setEndDate(end);
+                                            field.onChange({
+                                                startDate: start,
+                                                endDate: end,
+                                            });
+                                        }}
+                                        excludeDateIntervals={
+                                            disabledDateIntervals
+                                        }
+                                        minDate={new Date()}
+                                        inline
+                                        className="w-full h-full border border-gray-700 rounded-t-lg bg-white text-gray-900 text-sm"
+                                        calendarClassName="bg-white w-full h-full"
+                                        popperClassName="w-full"
+                                    />
+                                </div>
                             )}
                         />
                         {errors.dateRange && (
@@ -130,7 +162,7 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                             </p>
                         )}
                     </div>
-                    <div>
+                    <div className='px-2 pb-2 bg-gray-900'>
                         <select
                             {...register('guests', {
                                 required: 'Number of guests is required',
@@ -143,7 +175,7 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                                     message: `Maximum ${maxGuests} guests allowed`,
                                 },
                             })}
-                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-b-lg text-gray-500 text-sm">
+                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-500 text-sm">
                             <option value="" disabled>
                                 Number of guests
                             </option>
@@ -161,25 +193,20 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                     </div>
                 </div>
 
-                <div className="flex gap-2 bg-gray-900 p-2 rounded-lg shadow-md mt-4">
+                <div className="flex gap-2 bg-gray-900 p-2 rounded-b-lg shadow-md">
                     <button
                         type="submit"
-                        className="w-full py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200">
+                        className="w-full text-sm py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200">
                         Book Now
                     </button>
                     <button
                         type="button"
                         onClick={() => {
                             reset();
-                            setRange([
-                                {
-                                    startDate: null,
-                                    endDate: null,
-                                    key: 'selection',
-                                },
-                            ]);
+                            setStartDate(null);
+                            setEndDate(null);
                         }}
-                        className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
+                        className="w-full text-sm py-2 border border-gray-100 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
                         Clear
                     </button>
                 </div>
