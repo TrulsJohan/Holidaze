@@ -9,7 +9,13 @@ import {
     parseISO,
 } from 'date-fns';
 
-export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
+export function CreateBookingForm({
+    venueId,
+    onSubmit,
+    bookings,
+    maxGuests,
+    isLoggedIn,
+}) {
     const {
         register,
         handleSubmit,
@@ -47,6 +53,8 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
     }, [startDate, endDate, setValue]);
 
     const onFormSubmit = async (data) => {
+        if (!isLoggedIn) return;
+
         const formattedData = {
             ...data,
             dateFrom: new Date(data.dateFrom).toISOString(),
@@ -94,15 +102,21 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
 
     return (
         <div className="">
-            {success && (
+            {!isLoggedIn && (
+                <p className="text-red-500 text-center mb-4">
+                    Please log in to book this venue
+                </p>
+            )}
+            {success && isLoggedIn && (
                 <p className="text-green-500 text-center mb-4">{success}</p>
             )}
             <form
                 onSubmit={handleSubmit(onFormSubmit)}
-                className="flex flex-col">
-                <div className="rounded-lg shadow-md mt-4">
+                className="flex flex-col"
+                disabled={!isLoggedIn}>
+                <div className="rounded-lg shadow-md">
                     <div className="w-full h-full p-2 bg-gray-900 rounded-t-lg">
-                        <style jsx>{`
+                        <style jsx="true">{`
                             .react-datepicker,
                             .react-datepicker__month-container {
                                 width: 100% !important;
@@ -152,6 +166,7 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                                         className="w-full h-full border border-gray-700 rounded-t-lg bg-white text-gray-900 text-sm"
                                         calendarClassName="bg-white w-full h-full"
                                         popperClassName="w-full"
+                                        disabled={!isLoggedIn}
                                     />
                                 </div>
                             )}
@@ -162,7 +177,7 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                             </p>
                         )}
                     </div>
-                    <div className='px-2 pb-2 bg-gray-900'>
+                    <div className="px-2 pb-2 bg-gray-900">
                         <select
                             {...register('guests', {
                                 required: 'Number of guests is required',
@@ -175,7 +190,8 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                                     message: `Maximum ${maxGuests} guests allowed`,
                                 },
                             })}
-                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-500 text-sm">
+                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-500 text-sm"
+                            disabled={!isLoggedIn}>
                             <option value="" disabled>
                                 Number of guests
                             </option>
@@ -196,7 +212,10 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                 <div className="flex gap-2 bg-gray-900 p-2 rounded-b-lg shadow-md">
                     <button
                         type="submit"
-                        className="w-full text-sm py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200">
+                        className={`w-full text-sm py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 ${
+                            !isLoggedIn ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                        disabled={!isLoggedIn}>
                         Book Now
                     </button>
                     <button
@@ -206,7 +225,10 @@ export function CreateBookingForm({ venueId, onSubmit, bookings, maxGuests }) {
                             setStartDate(null);
                             setEndDate(null);
                         }}
-                        className="w-full text-sm py-2 border border-gray-100 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
+                        className={`w-full text-sm py-2 border border-gray-100 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700 ${
+                            !isLoggedIn ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                        disabled={!isLoggedIn}>
                         Clear
                     </button>
                 </div>
