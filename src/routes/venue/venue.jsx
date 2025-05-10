@@ -6,6 +6,7 @@ import { createBooking } from '../../hooks/booking/createBooking';
 import { deleteVenue } from '../../hooks/venue/deleteVenue';
 import { VenueCard } from '../../components/Cards/VenueCard';
 import GoogleMap from '../../components/UI/GoogleMaps';
+import { IoIosArrowBack } from 'react-icons/io';
 
 export function RenderVenue() {
     const [venue, setVenue] = useState(null);
@@ -70,10 +71,24 @@ export function RenderVenue() {
         }
     };
 
+    const handleBack = () => {
+        navigate('/');
+    };
+
     return (
         <>
             <title>Holidaze | {venue ? venue.name : 'Venue'}</title>
             <div className="min-h-screen p-8">
+                <div className="flex justify-start mb-8">
+                    <button
+                        onClick={handleBack}
+                        className="flex items-center gap-1 text-gray-900 text-sm font-semibold hover:underline">
+                        <span>
+                            <IoIosArrowBack />
+                        </span>{' '}
+                        Back home
+                    </button>
+                </div>
                 {loading && (
                     <p className="text-gray-900 text-center">
                         Loading venue...
@@ -112,9 +127,12 @@ export function RenderVenue() {
                                 </p>
                             )}
                         </div>
-                        <p className="text-wrap text-sm text-gray-900 w-full overflow-hidden">
-                            {venue.description}
-                        </p>
+                        <div className="my-4">
+                            <h4>Description:</h4>
+                            <p className="text-wrap text-sm text-gray-900 w-full overflow-hidden">
+                                {venue.description}
+                            </p>
+                        </div>
                         <div className="flex flex-col w-full border border-gray-900 rounded-lg">
                             <GoogleMap venue={venue} />
                             <div className="flex flex-row bg-gray-100 rounded-b-lg justify-between items-center w-full p-3 gap-6">
