@@ -162,10 +162,10 @@ export function RenderProfile() {
 
                         {profile.venues.length > 0 && (
                             <div className="mt-8">
-                                <h2 className="text-gray-900 my-8 text-sm">
+                                <h2 className="text-gray-900 my-8 text-sm font-semibold">
                                     Your Venues
                                 </h2>
-                                <div className="flex flex-col w-full">
+                                <div className="flex flex-col w-full gap-4">
                                     {profile.venues.map((venue) => (
                                         <Link
                                             key={venue.id}
@@ -179,10 +179,10 @@ export function RenderProfile() {
 
                         {profile.bookings.length > 0 && (
                             <div className="mt-8">
-                                <h2 className="text-gray-900 my-8 text-sm">
+                                <h2 className="text-gray-900 my-8 text-sm font-semibold">
                                     Your Bookings
                                 </h2>
-                                <div className="flex flex-col w-full">
+                                <div className="flex flex-col w-full gap-4">
                                     {profile.bookings.map((booking) => (
                                         <Link
                                             key={booking.id}
