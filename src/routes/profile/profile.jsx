@@ -7,6 +7,7 @@ import { VenueCard } from '../../components/Cards/VenueCard';
 import { BookingCard } from '../../components/Cards/BookingCard';
 import { Link } from 'react-router-dom';
 import { IoIosSettings } from 'react-icons/io';
+import { FiInfo } from 'react-icons/fi';
 
 export function RenderProfile() {
     const [profile, setProfile] = useState(null);
@@ -162,9 +163,16 @@ export function RenderProfile() {
 
                         {profile.venues.length > 0 && (
                             <div className="mt-8">
-                                <h2 className="text-gray-900 my-8 text-sm font-semibold">
-                                    Your Venues
-                                </h2>
+                                <p className="text-gray-900 flex felx-row w-full overflow-hidden my-8 text-sm font-semibold items-center">
+                                    <span className="relative inline-block group">
+                                        <FiInfo className="h-4 w-4 text-gray-900 mr-2" />
+                                        <span className="absolute left-full top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-2 shadow-lg min-w-max z-10">
+                                            Click on the venue you want to see
+                                            bookings on.
+                                        </span>
+                                    </span>
+                                    Your Venues{' '}
+                                </p>
                                 <div className="flex flex-col w-full gap-4">
                                     {profile.venues.map((venue) => (
                                         <Link
@@ -179,9 +187,15 @@ export function RenderProfile() {
 
                         {profile.bookings.length > 0 && (
                             <div className="mt-8">
-                                <h2 className="text-gray-900 my-8 text-sm font-semibold">
-                                    Your Bookings
-                                </h2>
+                                <p className="text-gray-900 flex felx-row w-full overflow-hidden my-8 text-sm font-semibold items-center">
+                                    <span className="relative inline-block group">
+                                        <FiInfo className="h-4 w-4 text-gray-900 mr-2" />
+                                        <span className="absolute left-full top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-2 shadow-lg min-w-max z-10">
+                                            Venues you have booked.
+                                        </span>
+                                    </span>
+                                    Your Bookings{' '}
+                                </p>
                                 <div className="flex flex-col w-full gap-4">
                                     {profile.bookings.map((booking) => (
                                         <Link
