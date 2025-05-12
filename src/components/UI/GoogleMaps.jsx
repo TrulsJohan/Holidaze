@@ -44,15 +44,6 @@ const GoogleMap = ({ venue }) => {
         venue.location.lat !== 0 &&
         venue.location.lng !== 0;
 
-    console.log(
-        'VenueMap coordinates:',
-        venue?.location?.lat,
-        venue?.location?.lng
-    );
-    console.log('VenueMap has valid coordinates:', hasValidCoordinates);
-    console.log('VenueMap address:', venueAddress);
-    console.log('VenueMap encoded address:', encodedAddress);
-
     return (
         <div className="w-full border-b rounded-t-lg bg-gray-100">
             <p className="text-gray-900 flex felx-row w-full overflow-hidden p-3 text-sm font-semibold items-center">
