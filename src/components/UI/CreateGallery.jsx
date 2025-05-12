@@ -3,13 +3,30 @@ import { useDebounce } from 'use-debounce';
 import { FaTrash } from 'react-icons/fa';
 
 export function CreateGallery({ register, watch, setValue, errors }) {
-    const [mediaFields, setMediaFields] = useState([
-        { id: Date.now(), url: '' },
-    ]);
+    const mediaValues = watch('media') || [{ url: '' }];
+    const [mediaFields, setMediaFields] = useState([]);
     const [imageStatus, setImageStatus] = useState({});
     const [activeImageIndex, setActiveImageIndex] = useState(0);
-    const mediaValues = watch('media') || [{ url: '' }];
     const sliderRef = useRef(null);
+
+    useEffect(() => {
+        const initialFields = mediaValues.map((media, index) => ({
+            id: Date.now() + index,
+            url: media.url || '',
+        }));
+        setMediaFields(
+            initialFields.length > 0
+                ? initialFields
+                : [{ id: Date.now(), url: '' }]
+        );
+    }, []);
+
+    useEffect(() => {
+        const newMediaValues = mediaFields.map((field, index) => ({
+            url: mediaValues[index]?.url || '',
+        }));
+        setValue('media', newMediaValues, { shouldValidate: true });
+    }, [mediaFields, setValue]);
 
     const validImages = mediaValues
         .map((media, index) => ({
@@ -19,17 +36,9 @@ export function CreateGallery({ register, watch, setValue, errors }) {
         }))
         .filter((image) => image.url && image.url.trim() !== '');
 
-    useEffect(() => {
-        const newMediaValues = mediaFields.map((field, index) => ({
-            url: mediaValues[index]?.url || '',
-        }));
-        setValue('media', newMediaValues, { shouldValidate: true });
-    }, [mediaFields, setValue]);
-
     const addMediaField = () => {
         const newField = { id: Date.now(), url: '' };
-        const newMediaFields = [...mediaFields, newField];
-        setMediaFields(newMediaFields);
+        setMediaFields([...mediaFields, newField]);
     };
 
     const removeMediaField = (index) => {
@@ -61,7 +70,7 @@ export function CreateGallery({ register, watch, setValue, errors }) {
             debouncedMediaValues.forEach((media, index) => {
                 const id = mediaFields[index]?.id || index;
                 if (media.url && media.url.trim() !== '') {
-                    if (!newStatus[id] || newStatus[id] === 'loading') {
+                    if (!newStatus[id]) {
                         newStatus[id] = 'loading';
                     }
                 } else {
@@ -178,6 +187,7 @@ export function CreateGallery({ register, watch, setValue, errors }) {
                                             message: 'Must be a valid URL',
                                         },
                                     })}
+                                    defaultValue={field.url}
                                     className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
                                     placeholder="Image URL"
                                 />
