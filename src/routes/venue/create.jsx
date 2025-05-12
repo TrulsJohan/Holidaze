@@ -25,7 +25,7 @@ export function RenderCreateVenue() {
     };
 
     return (
-        <div className="min-h-screen p-8 bg-gray-50">
+        <div className="min-h-screen p-8">
             {loading && (
                 <p className="text-gray-900 text-center">Creating venue...</p>
             )}
