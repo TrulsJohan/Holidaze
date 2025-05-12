@@ -1,4 +1,6 @@
 import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CreateGallery } from '../UI/CreateGallery';
 
 export function CreateVenueForm({ onSubmit, error }) {
@@ -32,7 +34,29 @@ export function CreateVenueForm({ onSubmit, error }) {
         },
     });
 
+    const navigate = useNavigate();
+    const [authError, setAuthError] = useState(null);
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        const venueManager = localStorage.getItem('venueManager');
+
+        if (!accessToken) {
+            setAuthError('You must be logged in to create a venue.');
+            navigate('/login');
+        } else if (venueManager !== 'true') {
+            setAuthError('Only venue managers can create venues.');
+            navigate('/login');
+        }
+    }, [navigate]);
+
     const onFormSubmit = (data) => {
+        const venueManager = localStorage.getItem('venueManager');
+        if (venueManager !== 'true') {
+            setAuthError('Only venue managers can submit venues.');
+            return;
+        }
+
         const formattedData = {
             ...data,
             price: Number(data.price),
@@ -61,6 +85,19 @@ export function CreateVenueForm({ onSubmit, error }) {
     const zipValue = watch('location.zip') || '';
     const countryValue = watch('location.country') || '';
     const continentValue = watch('location.continent') || '';
+
+    if (authError) {
+        return (
+            <div className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto p-4">
+                <p className="text-red-500 text-center">{authError}</p>
+                <button
+                    onClick={() => navigate('/login')}
+                    className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700">
+                    Go to Login
+                </button>
+            </div>
+        );
+    }
 
     return (
         <form
