@@ -1,32 +1,35 @@
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getVenue } from '../../hooks/venue/getVenue';
 import { updateVenue } from '../../hooks/venue/updateVenue';
+import { CreateGallery } from '../UI/CreateGallery';
 
 export function UpdateVenueForm() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [venue, setVenue] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [authError, setAuthError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [isOwner, setIsOwner] = useState(false);
-    const [mediaFields, setMediaFields] = useState([{ url: '', alt: '' }]);
     const name = localStorage.getItem('name');
 
     const {
         register,
         handleSubmit,
-        formState: { errors },
         reset,
+        watch,
+        setValue,
+        formState: { errors },
     } = useForm({
         defaultValues: {
             name: '',
             description: '',
-            media: [{ url: '', alt: '' }],
-            price: 1,
-            maxGuests: 1,
-            rating: 0,
+            media: [{ url: '' }],
+            price: '',
+            maxGuests: '',
             meta: {
                 wifi: false,
                 parking: false,
@@ -39,21 +42,22 @@ export function UpdateVenueForm() {
                 zip: '',
                 country: '',
                 continent: '',
-                lat: 0,
-                lng: 0,
             },
         },
     });
 
-    const addMediaField = () => {
-        setMediaFields([...mediaFields, { url: '', alt: '' }]);
-    };
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        const venueManager = localStorage.getItem('venueManager');
 
-    const removeMediaField = (index) => {
-        if (mediaFields.length > 1) {
-            setMediaFields(mediaFields.filter((_, i) => i !== index));
+        if (!accessToken) {
+            setAuthError('You must be logged in to update a venue.');
+            navigate('/login');
+        } else if (venueManager !== 'true') {
+            setAuthError('Only venue managers can update venues.');
+            navigate('/login');
         }
-    };
+    }, [navigate]);
 
     useEffect(() => {
         const fetchVenue = async () => {
@@ -83,17 +87,18 @@ export function UpdateVenueForm() {
 
                 const media =
                     venueData.media?.length > 0
-                        ? venueData.media.map((url) => ({ url, alt: '' }))
-                        : [{ url: '', alt: '' }];
-                setMediaFields(media);
+                        ? venueData.media.map((item) => ({
+                              url: item.url,
+                              alt: item.alt || 'venue image',
+                          }))
+                        : [{ url: '' }];
 
                 reset({
                     name: venueData.name || '',
                     description: venueData.description || '',
                     media,
-                    price: venueData.price || 1,
-                    maxGuests: venueData.maxGuests || 1,
-                    rating: venueData.rating || 0,
+                    price: venueData.price || '',
+                    maxGuests: venueData.maxGuests || '',
                     meta: {
                         wifi: venueData.meta?.wifi || false,
                         parking: venueData.meta?.parking || false,
@@ -106,8 +111,6 @@ export function UpdateVenueForm() {
                         zip: venueData.location?.zip || '',
                         country: venueData.location?.country || '',
                         continent: venueData.location?.continent || '',
-                        lat: venueData.location?.lat || 0,
-                        lng: venueData.location?.lng || 0,
                     },
                 });
             } catch (error) {
@@ -121,62 +124,57 @@ export function UpdateVenueForm() {
         fetchVenue();
     }, [id, name, reset]);
 
-    const onSubmit = async (data) => {
+    const onFormSubmit = async (data) => {
+        const venueManager = localStorage.getItem('venueManager');
+        if (venueManager !== 'true') {
+            setAuthError('Only venue managers can submit venues.');
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setSuccess(null);
 
         try {
-            const mediaArray = data.media
-                .filter((media) => media.url)
-                .map((media) => ({
-                    url: media.url,
-                    alt: media.alt || '',
-                }));
-
-            const venueData = {
-                name: data.name,
-                description: data.description,
-                media: mediaArray,
+            const formattedData = {
+                ...data,
                 price: Number(data.price),
                 maxGuests: Number(data.maxGuests),
-                rating: Number(data.rating),
-                meta: {
-                    wifi: data.meta.wifi,
-                    parking: data.meta.parking,
-                    breakfast: data.meta.breakfast,
-                    pets: data.meta.pets,
-                },
+                rating: data.rating ? Number(data.rating) : 0,
                 location: {
+                    ...data.location,
                     address: data.location.address || null,
                     city: data.location.city || null,
                     zip: data.location.zip || null,
                     country: data.location.country || null,
                     continent: data.location.continent || null,
-                    lat: Number(data.location.lat) || 0,
-                    lng: Number(data.location.lng) || 0,
                 },
+                media: data.media
+                    .filter((media) => media.url && media.url.trim() !== '')
+                    .map((media) => ({ url: media.url, alt: 'venue image' })),
             };
 
-            await updateVenue(id, venueData);
+            await updateVenue(id, formattedData);
             setSuccess('Venue updated successfully!');
+
             const response = await getVenue(id);
             const updatedVenue = response.data;
             setVenue(updatedVenue);
 
             const media =
                 updatedVenue.media?.length > 0
-                    ? updatedVenue.media.map((url) => ({ url, alt: '' }))
-                    : [{ url: '', alt: '' }];
-            setMediaFields(media);
+                    ? updatedVenue.media.map((item) => ({
+                          url: item.url,
+                          alt: item.alt || 'venue image',
+                      }))
+                    : [{ url: '' }];
 
             reset({
                 name: updatedVenue.name || '',
                 description: updatedVenue.description || '',
                 media,
-                price: updatedVenue.price || 1,
-                maxGuests: updatedVenue.maxGuests || 1,
-                rating: updatedVenue.rating || 0,
+                price: updatedVenue.price || '',
+                maxGuests: updatedVenue.maxGuests || '',
                 meta: {
                     wifi: updatedVenue.meta?.wifi || false,
                     parking: updatedVenue.meta?.parking || false,
@@ -189,10 +187,12 @@ export function UpdateVenueForm() {
                     zip: updatedVenue.location?.zip || '',
                     country: updatedVenue.location?.country || '',
                     continent: updatedVenue.location?.continent || '',
-                    lat: updatedVenue.location?.lat || 0,
-                    lng: updatedVenue.location?.lng || 0,
                 },
             });
+
+            setTimeout(() => {
+                navigate('/profile');
+            }, 1000);
         } catch (error) {
             console.error('Could not update venue:', error.message);
             setError(error.message || 'Failed to update venue');
@@ -201,343 +201,339 @@ export function UpdateVenueForm() {
         }
     };
 
-    const handleReset = () => {
-        const media =
-            venue?.media?.length > 0
-                ? venue.media.map((url) => ({ url, alt: '' }))
-                : [{ url: '', alt: '' }];
-        setMediaFields(media);
-        reset({
-            name: venue?.name || '',
-            description: venue?.description || '',
-            media,
-            price: venue?.price || 1,
-            maxGuests: venue?.maxGuests || 1,
-            rating: venue?.rating || 0,
-            meta: {
-                wifi: venue?.meta?.wifi || false,
-                parking: venue?.meta?.parking || false,
-                breakfast: venue?.meta?.breakfast || false,
-                pets: venue?.meta?.pets || false,
-            },
-            location: {
-                address: venue?.location?.address || '',
-                city: venue?.location?.city || '',
-                zip: venue?.location?.zip || '',
-                country: venue?.location?.country || '',
-                continent: venue?.location?.continent || '',
-                lat: venue?.location?.lat || 0,
-                lng: venue?.location?.lng || 0,
-            },
-        });
-        setError(null);
-        setSuccess(null);
-    };
+    const nameValue = watch('name') || '';
+    const descriptionValue = watch('description') || '';
+    const addressValue = watch('location.address') || '';
+    const cityValue = watch('location.city') || '';
+    const zipValue = watch('location.zip') || '';
+    const countryValue = watch('location.country') || '';
+    const continentValue = watch('location.continent') || '';
 
-    if (!name) {
+    if (authError) {
         return (
-            <p className="text-red-500 text-center">
-                Please log in to update a venue.
-            </p>
+            <div className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto p-4">
+                <p className="text-red-500 text-center">{authError}</p>
+                <button
+                    onClick={() => navigate('/login')}
+                    className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700">
+                    Go to Login
+                </button>
+            </div>
         );
     }
 
-    if (!id) {
-        return <p className="text-red-500 text-center">Venue ID not found.</p>;
+    if (!name || !id || (!isOwner && error)) {
+        return (
+            <div className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto p-4">
+                <p className="text-red-500 text-center">
+                    {error || 'Please log in to update a venue.'}
+                </p>
+                <button
+                    onClick={() => navigate('/login')}
+                    className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700">
+                    Go to Login
+                </button>
+            </div>
+        );
     }
 
-    if (!isOwner && error) {
-        return <p className="text-red-500 text-center">{error}</p>;
+    if (loading) {
+        return (
+            <div className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto p-4">
+                <p className="text-gray-900 text-center">Loading venue...</p>
+            </div>
+        );
     }
 
     return (
-        <div className="max-w-md mx-auto p-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Update Venue
-            </h2>
-            {loading && <p className="text-gray-900 text-center">Loading...</p>}
-            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-            {success && (
-                <p className="text-green-500 text-center mb-4">{success}</p>
-            )}
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-4">
+        <form
+            onSubmit={handleSubmit(onFormSubmit)}
+            className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto">
+            {error && <p className="text-red-500 text-center">{error}</p>}
+            {success && <p className="text-green-500 text-center">{success}</p>}
+            <div className="bg-gray-900 flex w-full flex-col gap-4 p-2 rounded-lg">
                 <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Name
-                    </label>
-                    <input
-                        type="text"
-                        {...register('name', {
-                            required: 'Name is required',
-                            maxLength: {
-                                value: 100,
-                                message: 'Name cannot exceed 100 characters',
-                            },
-                        })}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={venue?.name || 'Enter venue name'}
-                    />
+                    <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
+                        <input
+                            type="text"
+                            {...register('name', {
+                                required: 'Name is required',
+                                maxLength: {
+                                    value: 100,
+                                    message:
+                                        'Title cannot exceed 100 characters',
+                                },
+                            })}
+                            className="w-full text-gray-900"
+                            placeholder="title..."
+                        />
+                    </div>
+                    <div className="flex justify-between text-gray-50 text-xs mt-1">
+                        <span>Enter a title...</span>
+                        <span>{nameValue.length}/100</span>
+                    </div>
                     {errors.name && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                             {errors.name.message}
                         </p>
                     )}
                 </div>
+
                 <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Description
-                    </label>
                     <textarea
                         {...register('description', {
                             required: 'Description is required',
                             maxLength: {
-                                value: 1000,
+                                value: 500,
                                 message:
-                                    'Description cannot exceed 1000 characters',
+                                    'Description cannot exceed 500 characters',
                             },
                         })}
                         className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={venue?.description || 'Describe the venue'}
-                        rows="4"
+                        placeholder="Describe the venue..."
+                        rows={4}
                     />
+                    <div className="flex justify-between text-gray-50 text-xs mt-1">
+                        <span>Enter a description...</span>
+                        <span>{descriptionValue.length}/500</span>
+                    </div>
                     {errors.description && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                             {errors.description.message}
                         </p>
                     )}
                 </div>
+
                 <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Images
-                    </label>
-                    {mediaFields.map((field, index) => (
-                        <div key={index} className="flex gap-2 mb-2">
-                            <input
-                                type="url"
-                                {...register(`media.${index}.url`, {
-                                    validate: (value) =>
-                                        !value ||
-                                        /^https?:\/\/.+/i.test(value) ||
-                                        'Invalid URL',
-                                })}
-                                className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                                placeholder="Image URL"
-                            />
-                            <input
-                                type="text"
-                                {...register(`media.${index}.alt`)}
-                                className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                                placeholder="Alt text"
-                            />
-                            {mediaFields.length > 1 && (
-                                <button
-                                    type="button"
-                                    onClick={() => removeMediaField(index)}
-                                    className="px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                                    Remove
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={addMediaField}
-                        className="mt-2 px-4 py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700">
-                        Add Image
-                    </button>
-                    {errors.media && errors.media[index] && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.media[index].url?.message}
-                        </p>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Price (per night)
-                    </label>
-                    <input
-                        type="number"
-                        {...register('price', {
-                            required: 'Price is required',
-                            min: {
-                                value: 1,
-                                message: 'Price must be at least 1',
-                            },
-                        })}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={venue?.price || 'Enter price'}
-                    />
-                    {errors.price && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.price.message}
-                        </p>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Max Guests
-                    </label>
-                    <input
-                        type="number"
+                    <select
                         {...register('maxGuests', {
                             required: 'Max guests is required',
                             min: {
                                 value: 1,
-                                message: 'Max guests must be at least 1',
+                                message: 'Must be at least 1 guest',
                             },
+                            valueAsNumber: true,
                         })}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={venue?.maxGuests || 'Enter max guests'}
-                    />
+                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900">
+                        <option value="" disabled>
+                            Number of guests...
+                        </option>
+                        {[...Array(10)].map((_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                                {i + 1}
+                            </option>
+                        ))}
+                    </select>
+                    <div className="flex justify-between text-gray-50 text-xs mt-1">
+                        <span>Number of guests...</span>
+                    </div>
                     {errors.maxGuests && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                             {errors.maxGuests.message}
                         </p>
                     )}
                 </div>
+
                 <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Rating (0-5)
-                    </label>
                     <input
                         type="number"
-                        {...register('rating', {
+                        step="0.01"
+                        min="0"
+                        {...register('price', {
+                            required: 'Price is required',
                             min: {
                                 value: 0,
-                                message: 'Rating cannot be less than 0',
-                            },
-                            max: {
-                                value: 5,
-                                message: 'Rating cannot exceed 5',
+                                message: 'Price cannot be negative',
                             },
                         })}
                         className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={venue?.rating || 'Enter rating'}
+                        placeholder="Price"
                     />
-                    {errors.rating && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.rating.message}
+                    <div className="flex justify-between text-gray-50 text-xs mt-1">
+                        <span>Price per night...</span>
+                    </div>
+                    {errors.price && (
+                        <p className="text-red-500 text-xs mt-1">
+                            {errors.price.message}
                         </p>
                     )}
                 </div>
+            </div>
+
+            <CreateGallery
+                register={register}
+                watch={watch}
+                setValue={setValue}
+                errors={errors}
+            />
+
+            <div className="bg-gray-900 flex w-full flex-col gap-4 p-2 rounded-lg">
                 <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Amenities
-                    </label>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <input
+                                type="text"
+                                {...register('location.address', {
+                                    maxLength: {
+                                        value: 100,
+                                        message:
+                                            'Address cannot exceed 100 characters',
+                                    },
+                                })}
+                                className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                                placeholder="Address"
+                            />
+                            <div className="flex justify-between text-gray-50 text-xs mt-1">
+                                <span>Enter an address...</span>
+                                <span>{addressValue.length}/100</span>
+                            </div>
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                {...register('location.city', {
+                                    required: 'City is required',
+                                    maxLength: {
+                                        value: 50,
+                                        message:
+                                            'City cannot exceed 50 characters',
+                                    },
+                                })}
+                                className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                                placeholder="City"
+                            />
+                            <div className="flex justify-between text-gray-50 text-xs mt-1">
+                                <span>Enter a city...</span>
+                                <span>{cityValue.length}/50</span>
+                            </div>
+                            {errors.location?.city && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {errors.location.city.message}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                {...register('location.zip', {
+                                    maxLength: {
+                                        value: 20,
+                                        message:
+                                            'ZIP code cannot exceed 20 characters',
+                                    },
+                                })}
+                                className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                                placeholder="ZIP Code"
+                            />
+                            <div className="flex justify-between text-gray-50 text-xs mt-1">
+                                <span>Enter a ZIP code...</span>
+                                <span>{zipValue.length}/20</span>
+                            </div>
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                {...register('location.country', {
+                                    required: 'Country is required',
+                                    maxLength: {
+                                        value: 50,
+                                        message:
+                                            'Country cannot exceed 50 characters',
+                                    },
+                                })}
+                                className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                                placeholder="Country"
+                            />
+                            <div className="flex justify-between text-gray-50 text-xs mt-1">
+                                <span>Enter a country...</span>
+                                <span>{countryValue.length}/50</span>
+                            </div>
+                            {errors.location?.country && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {errors.location.country.message}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                {...register('location.continent', {
+                                    required: 'Continent is required',
+                                    maxLength: {
+                                        value: 50,
+                                        message:
+                                            'Continent cannot exceed 50 characters',
+                                    },
+                                })}
+                                className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                                placeholder="Continent"
+                            />
+                            <div className="flex justify-between text-gray-50 text-xs mt-1">
+                                <span>Enter a continent...</span>
+                                <span>{continentValue.length}/50</span>
+                            </div>
+                            {errors.location?.continent && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {errors.location.continent.message}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div className="flex flex-col gap-2 text-gray-50">
+                        <label className="flex items-center gap-2">
                             <input
                                 type="checkbox"
                                 {...register('meta.wifi')}
                                 className="h-4 w-4 bg-gray-100 border border-gray-900 rounded"
                             />
-                            <label className="text-gray-900 text-sm">
-                                WiFi
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-2">
+                            WiFi
+                        </label>
+                        <label className="flex items-center gap-2">
                             <input
                                 type="checkbox"
                                 {...register('meta.parking')}
                                 className="h-4 w-4 bg-gray-100 border border-gray-900 rounded"
                             />
-                            <label className="text-gray-900 text-sm">
-                                Parking
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-2">
+                            Parking
+                        </label>
+                        <label className="flex items-center gap-2">
                             <input
                                 type="checkbox"
                                 {...register('meta.breakfast')}
-                                className="h-4 w-4 bg-gray-100 border border-gray-900 rounded"
+                                className="h-4 w-4 bg-gray-100 border border-gray-700 rounded"
                             />
-                            <label className="text-gray-900 text-sm">
-                                Breakfast
-                            </label>
-                        </div>
-                        <div className="flex items-center gap-2">
+                            Breakfast
+                        </label>
+                        <label className="flex items-center gap-2">
                             <input
                                 type="checkbox"
                                 {...register('meta.pets')}
                                 className="h-4 w-4 bg-gray-100 border border-gray-900 rounded"
                             />
-                            <label className="text-gray-900 text-sm">
-                                Pets Allowed
-                            </label>
-                        </div>
+                            Pets Allowed
+                        </label>
                     </div>
                 </div>
-                <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Location
-                    </label>
-                    <input
-                        type="text"
-                        {...register('location.address')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900 mb-2"
-                        placeholder={
-                            venue?.location?.address || 'Enter address'
-                        }
-                    />
-                    <input
-                        type="text"
-                        {...register('location.city')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900 mb-2"
-                        placeholder={venue?.location?.city || 'Enter city'}
-                    />
-                    <input
-                        type="text"
-                        {...register('location.zip')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900 mb-2"
-                        placeholder={venue?.location?.zip || 'Enter zip code'}
-                    />
-                    <input
-                        type="text"
-                        {...register('location.country')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900 mb-2"
-                        placeholder={
-                            venue?.location?.country || 'Enter country'
-                        }
-                    />
-                    <input
-                        type="text"
-                        {...register('location.continent')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900 mb-2"
-                        placeholder={
-                            venue?.location?.continent || 'Enter continent'
-                        }
-                    />
-                    <input
-                        type="number"
-                        {...register('location.lat')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900 mb-2"
-                        placeholder={venue?.location?.lat || 'Enter latitude'}
-                    />
-                    <input
-                        type="number"
-                        {...register('location.lng')}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={venue?.location?.lng || 'Enter longitude'}
-                    />
-                </div>
+
                 <div className="flex gap-2">
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700 disabled:bg-gray-500">
-                        {loading ? 'Updating...' : 'Update Venue'}
+                        className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700 disabled:bg-gray-500">
+                        {loading ? 'Updating...' : 'Update'}
                     </button>
                     <button
                         type="button"
-                        onClick={handleReset}
-                        disabled={loading || !venue}
-                        className="w-full py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 disabled:bg-gray-300">
-                        Reset Form
+                        onClick={() => reset()}
+                        disabled={loading}
+                        className="w-full py-2 bg-gray-900 text-gray-50 border border-gray-50 rounded-lg hover:bg-gray-300 disabled:bg-gray-500">
+                        Reset
                     </button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     );
 }
