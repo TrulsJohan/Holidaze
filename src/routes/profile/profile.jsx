@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getProfile } from '../../hooks/profile/getProfile';
+import { IoCloseOutline } from 'react-icons/io5';
 import { FaCheck } from 'react-icons/fa6';
 import { VenueCard } from '../../components/Cards/VenueCard';
 import { BookingCard } from '../../components/Cards/BookingCard';
@@ -10,11 +12,18 @@ export function RenderProfile() {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [authError, setAuthError] = useState(null);
     const name = localStorage.getItem('name');
+    const navigate = useNavigate();
+    const isVenueManager = localStorage.getItem('venueManager') === 'true';
 
-    if (!name) {
-        console.error('Could not find name in localStorage');
-    }
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            setAuthError('You must be logged in to view your profile.');
+            navigate('/login');
+        }
+    }, [navigate]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -34,8 +43,24 @@ export function RenderProfile() {
 
         if (name) {
             fetchProfile();
+        } else {
+            console.error('Could not find name in localStorage');
+            setError('No user name found. Please log in.');
         }
     }, [name]);
+
+    if (authError) {
+        return (
+            <div className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto p-4">
+                <p className="text-red-500 text-center">{authError}</p>
+                <button
+                    onClick={() => navigate('/login')}
+                    className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700">
+                    Go to Login
+                </button>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -72,7 +97,7 @@ export function RenderProfile() {
                         <div className="bg-white rounded-b-lg shadow-md -mt-16 p-6 relative">
                             <Link
                                 to={'/profile/update'}
-                                className="absolute right-4 top-4 ">
+                                className="absolute right-4 top-4">
                                 <div className="rounded-full p-1 hover:bg-gray-300">
                                     <IoIosSettings className="h-6 w-6" />
                                 </div>
@@ -90,14 +115,20 @@ export function RenderProfile() {
                                     {profile.name}
                                 </h1>
                                 <p className="text-gray-600">{profile.email}</p>
-                                {profile.venueManager && (
-                                    <div className="flex flex-row items-center w-fit gap-2 mt-2 px-3 py-1 bg-gray-900 text-gray-50 text-sm rounded-full">
-                                        <p>Venue Manager</p>
-                                        <span>
+                                <div className="flex flex-row items-center w-fit gap-2 mt-2 px-3 py-1 bg-gray-900 text-gray-50 text-sm rounded-full">
+                                    <p>
+                                        {isVenueManager
+                                            ? 'Venue Manager'
+                                            : 'Venue Manager'}
+                                    </p>
+                                    <span>
+                                        {isVenueManager ? (
                                             <FaCheck />
-                                        </span>
-                                    </div>
-                                )}
+                                        ) : (
+                                            <IoCloseOutline />
+                                        )}
+                                    </span>
+                                </div>
                                 {profile.bio ? (
                                     <p className="mt-4 text-sm text-gray-700">
                                         {profile.bio}
