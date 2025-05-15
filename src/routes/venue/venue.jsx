@@ -72,7 +72,11 @@ export function RenderVenue() {
     };
 
     const handleBack = () => {
-        navigate('/');
+        if (venue.owner.name === localStorage.getItem('name')) {
+            navigate('/profile');
+        } else {
+            navigate('/');
+        }
     };
 
     return (
@@ -86,7 +90,7 @@ export function RenderVenue() {
                         <span>
                             <IoIosArrowBack />
                         </span>{' '}
-                        Back home
+                        {isOwner ? <p>Back to Profile</p> : <p>Back home</p>}
                     </button>
                 </div>
                 {loading && (

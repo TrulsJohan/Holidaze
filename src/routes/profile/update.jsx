@@ -18,7 +18,7 @@ export function RenderUpdateProfile() {
                         <span>
                             <IoIosArrowBack />
                         </span>{' '}
-                        Back home
+                        Back to Profile
                     </button>
                 </div>
                 <UpdateProfileForm />
