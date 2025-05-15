@@ -6,12 +6,12 @@ import { Footer } from './Footer';
 export const Layout = () => (
     <div className="flex flex-col min-h-screen">
         <Background />
-        <div>
+        <div className="relative">
             <Header />
-            <main className="grow">
+            <main className="grow pb-20">
                 <Outlet />
             </main>
-            <Footer className="" />
+            <Footer />
         </div>
     </div>
 );
