@@ -79,6 +79,14 @@ export function RenderVenue() {
         }
     };
 
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
     return (
         <>
             <title>Holidaze | {venue ? venue.name : 'Venue'}</title>
@@ -137,25 +145,92 @@ export function RenderVenue() {
                                 {venue.description}
                             </p>
                         </div>
-                        <div className="flex flex-col w-full border border-gray-900 rounded-lg">
-                            <GoogleMap venue={venue} />
-                            <div className="flex flex-row bg-gray-100 rounded-b-lg justify-between items-center w-full p-3 gap-6">
-                                <div className="w-[80px]">
-                                    <img
-                                        className="rounded-full w-[50px] h-[50px]"
-                                        src={venue.owner.avatar.url}
-                                        alt={
-                                            venue.owner.avatar.alt ||
-                                            'Owner avatar'
-                                        }
-                                    />
-                                </div>
-                                <div className="flex flex-col w-full text-xs text-gray-900 overflow-hidden">
-                                    <p>{venue.owner.name}</p>
-                                    <p>{venue.owner.email}</p>
+                        {isOwner && venue.bookings.length > 0 ? (
+                            <div className="flex flex-col gap-4 w-full rounded-lg">
+                                <h4 className="text-gray-900">Bookings</h4>
+                                {venue.bookings.map((booking) => (
+                                    <div
+                                        key={booking.id}
+                                        className="flex flex-col bg-gray-900 p-2 rounded-lg text-gray-50">
+                                        <div className="flex flex-row bg-gray-100 rounded-t-lg border-b border-gray-900 justify-between items-center w-full p-3 gap-6">
+                                            <div className="w-[80px]">
+                                                <img
+                                                    className="rounded-full w-[50px] h-[50px]"
+                                                    src={
+                                                        booking.customer.avatar
+                                                            .url
+                                                    }
+                                                    alt={
+                                                        booking.customer.avatar
+                                                            .alt ||
+                                                        'Owner avatar'
+                                                    }
+                                                />
+                                            </div>
+                                            <div className="flex flex-col w-full text-sm text-gray-900 overflow-hidden">
+                                                <p>{booking.customer.name}</p>
+                                                <p>{booking.customer.email}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-row">
+                                            <div className="flex flex-col bg-gray-100 border-r text-sm text-gray-900 w-full p-2">
+                                                <p className="text-gray-700">
+                                                    From
+                                                </p>
+                                                {formatDate(booking.dateFrom)}
+                                            </div>
+                                            <div className="flex flex-col bg-gray-100 text-sm text-gray-900 w-full p-2">
+                                                <p className="text-gray-700">
+                                                    To
+                                                </p>
+                                                {formatDate(booking.dateTo)}
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-row border-t border-gray-900">
+                                            <div className="flex flex-col bg-gray-100 border-r text-sm rounded-bl-lg text-gray-900 w-full p-2">
+                                                <p className="text-gray-700">
+                                                    Guests
+                                                </p>
+                                                <p className="text-sm">
+                                                    {booking.guests} guest
+                                                    {booking.guests !== 1
+                                                        ? 's'
+                                                        : ''}
+                                                </p>
+                                            </div>
+                                            <div className="flex flex-col bg-gray-100 text-sm rounded-br-lg text-gray-900 w-full p-2">
+                                                <p className="text-gray-700">
+                                                    Booked on
+                                                </p>
+                                                {formatDate(booking.created)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : isOwner && venue.bookings.length === 0 ? (
+                            <div></div>
+                        ) : (
+                            <div className="flex flex-col w-full border border-gray-900 rounded-lg">
+                                <GoogleMap venue={venue} />
+                                <div className="flex flex-row bg-gray-100 rounded-b-lg justify-between items-center w-full p-3 gap-6">
+                                    <div className="w-[80px]">
+                                        <img
+                                            className="rounded-full w-[50px] h-[50px]"
+                                            src={venue.owner.avatar.url}
+                                            alt={
+                                                venue.owner.avatar.alt ||
+                                                'Owner avatar'
+                                            }
+                                        />
+                                    </div>
+                                    <div className="flex flex-col w-full text-xs text-gray-900 overflow-hidden">
+                                        <p>{venue.owner.name}</p>
+                                        <p>{venue.owner.email}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 )}
                 {!venue && !loading && !error && (
