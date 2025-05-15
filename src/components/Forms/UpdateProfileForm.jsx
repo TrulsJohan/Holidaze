@@ -2,13 +2,16 @@ import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { getProfile } from '../../hooks/profile/getProfile';
 import { updateProfile } from '../../hooks/profile/updateProfile';
+import { useNavigate } from 'react-router-dom';
 
 export function UpdateProfileForm() {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [authError, setAuthError] = useState(null);
     const [success, setSuccess] = useState(null);
     const name = localStorage.getItem('name');
+    const navigate = useNavigate();
 
     const {
         register,
@@ -23,6 +26,14 @@ export function UpdateProfileForm() {
             venueManager: false,
         },
     });
+
+    useEffect(()=> {
+        const accessToken = localStorage.getItem('accessToken');
+        if(!accessToken || !name) {
+            setAuthError('You must be logged in to update your profile.');
+            navigate('/login');
+        }
+    }, [navigate]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -100,7 +111,7 @@ export function UpdateProfileForm() {
         setSuccess(null);
     };
 
-    if (!name) {
+    if (!name || authError) {
         return (
             <p className="text-red-500 text-center">
                 Please log in to update your profile.
