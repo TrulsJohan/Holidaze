@@ -18,6 +18,7 @@ export function UpdateProfileForm() {
         handleSubmit,
         formState: { errors },
         reset,
+        watch,
     } = useForm({
         defaultValues: {
             bio: '',
@@ -27,9 +28,11 @@ export function UpdateProfileForm() {
         },
     });
 
-    useEffect(()=> {
+    const bioValue = watch('bio') || '';
+
+    useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
-        if(!accessToken || !name) {
+        if (!accessToken || !name) {
             setAuthError('You must be logged in to update your profile.');
             navigate('/login');
         }
@@ -74,7 +77,10 @@ export function UpdateProfileForm() {
         try {
             if (!data.venueManager) {
                 const venuesResponse = await getProfile(name);
-                if (venuesResponse.data && venuesResponse.data.venues.length > 0) {
+                if (
+                    venuesResponse.data &&
+                    venuesResponse.data.venues.length > 0
+                ) {
                     throw new Error(
                         'Cannot disable Venue Manager while you have active venues'
                     );
@@ -113,112 +119,141 @@ export function UpdateProfileForm() {
 
     if (!name || authError) {
         return (
-            <p className="text-red-500 text-center">
-                Please log in to update your profile.
-            </p>
+            <div className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto p-4">
+                <p className="text-red-500 text-center">
+                    Please log in to update your profile.
+                </p>
+                <button
+                    onClick={() => navigate('/login')}
+                    className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700">
+                    Go to Login
+                </button>
+            </div>
         );
     }
 
     return (
-        <div className="max-w-md mx-auto p-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Update Profile
-            </h2>
-            {loading && <p className="text-gray-900 text-center">Loading...</p>}
-            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-            {success && (
-                <p className="text-green-500 text-center mb-4">{success}</p>
+        <div className="flex w-full flex-col gap-4 rounded-lg mx-auto">
+            {loading && (
+                <p className="text-gray-900 text-center">Loading profile...</p>
             )}
+            {error && <p className="text-red-500 text-center">{error}</p>}
+            {success && <p className="text-green-500 text-center">{success}</p>}
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-4">
-                <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Bio
-                    </label>
-                    <textarea
-                        {...register('bio', {
-                            maxLength: {
-                                value: 500,
-                                message: 'Bio cannot exceed 500 characters',
-                            },
-                        })}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={profile?.bio || 'Tell us more about you'}
-                        rows="4"
-                    />
-                    {errors.bio && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.bio.message}
-                        </p>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Avatar URL
-                    </label>
-                    <input
-                        type="url"
-                        {...register('avatar.url', {
-                            pattern: {
-                                value: /^https?:\/\/.+/i,
-                                message: 'Please enter a valid URL',
-                            },
-                        })}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={profile?.avatar?.url || 'No avatar set'}
-                    />
-                    {errors.avatar?.url && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.avatar.url.message}
-                        </p>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-gray-900 text-sm mb-1">
-                        Banner URL
-                    </label>
-                    <input
-                        type="url"
-                        {...register('banner.url', {
-                            pattern: {
-                                value: /^https?:\/\/.+/i,
-                                message: 'Please enter a valid URL',
-                            },
-                        })}
-                        className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
-                        placeholder={profile?.banner?.url || 'No banner set'}
-                    />
-                    {errors.banner?.url && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.banner.url.message}
-                        </p>
-                    )}
-                </div>
-                <div className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        {...register('venueManager')}
-                        className="h-4 w-4 bg-gray-100 border border-gray-900 rounded"
-                    />
-                    <label className="text-gray-900 text-sm">
-                        Venue Manager
-                    </label>
-                </div>
-                <div className="flex gap-2">
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700 disabled:bg-gray-500">
-                        {loading ? 'Updating...' : 'Update Profile'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleReset}
-                        disabled={loading || !profile}
-                        className="w-full py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 disabled:bg-gray-300">
-                        Reset Form
-                    </button>
+                className="flex w-full flex-col gap-4 rounded-lg">
+                <div className="bg-gray-900 flex w-full flex-col gap-6 p-2 rounded-lg">
+                    <div>
+                        <textarea
+                            {...register('bio', {
+                                maxLength: {
+                                    value: 500,
+                                    message: 'Bio cannot exceed 500 characters',
+                                },
+                            })}
+                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                            placeholder="Tell us more about you"
+                            rows="4"
+                        />
+                        <div className="flex justify-between text-gray-50 text-xs mt-1">
+                            <span>Enter your bio...</span>
+                            <span>{bioValue.length}/500</span>
+                        </div>
+                        {errors.bio && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errors.bio.message}
+                            </p>
+                        )}
+                    </div>
+                    <div>
+                        {profile?.avatar?.url ? (
+                            <img
+                                src={profile.avatar.url}
+                                alt="Avatar"
+                                className="w-full h-[200px] rounded-lg object-cover mb-2"
+                            />
+                        ) : (
+                            <p className="text-gray-50 text-sm mb-2">
+                                No avatar set
+                            </p>
+                        )}
+                        <input
+                            type="url"
+                            {...register('avatar.url', {
+                                pattern: {
+                                    value: /^https?:\/\/.+/i,
+                                    message: 'Please enter a valid URL',
+                                },
+                            })}
+                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                            placeholder="Enter avatar URL"
+                        />
+                        <div className="flex justify-between text-gray-50 text-xs mt-1">
+                            <span>Enter avatar URL...</span>
+                        </div>
+                        {errors.avatar?.url && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errors.avatar.url.message}
+                            </p>
+                        )}
+                    </div>
+                    <div>
+                        {profile?.banner?.url ? (
+                            <img
+                                src={profile.banner.url}
+                                alt="Banner"
+                                className="w-full h-[200px] rounded-lg object-cover mb-2"
+                            />
+                        ) : (
+                            <p className="text-gray-50 text-sm mb-2">
+                                No banner set
+                            </p>
+                        )}
+                        <input
+                            type="url"
+                            {...register('banner.url', {
+                                pattern: {
+                                    value: /^https?:\/\/.+/i,
+                                    message: 'Please enter a valid URL',
+                                },
+                            })}
+                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                            placeholder="Enter banner URL"
+                        />
+                        <div className="flex justify-between text-gray-50 text-xs mt-1">
+                            <span>Enter banner URL...</span>
+                        </div>
+                        {errors.banner?.url && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errors.banner.url.message}
+                            </p>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-4 text-gray-50 text-sm">
+                            <input
+                                type="checkbox"
+                                {...register('venueManager')}
+                                className="h-5 w-5 bg-gray-100 border border-gray-900 rounded"
+                            />
+                            <span>Become a Venue Manager to rent out venues.</span>
+                        </label>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700 disabled:bg-gray-500">
+                            {loading ? 'Updating...' : 'Update'}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleReset}
+                            disabled={loading || !profile}
+                            className="w-full py-2 bg-gray-900 text-gray-50 border border-gray-50 rounded-lg hover:bg-gray-300 disabled:bg-gray-500">
+                            Reset
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
