@@ -5,6 +5,7 @@ import { VenueCard } from '../components/Cards/VenueCard';
 import { FilterForm } from '../components/Forms/FilterForm';
 import { SearchForm } from '../components/Forms/SearchForm';
 import { MdOutlineFilterAlt } from 'react-icons/md';
+import { IoIosArrowUp } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import { debounce } from 'lodash';
 
@@ -18,6 +19,7 @@ export function RenderHome() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilter, setShowFilter] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [showBackToTop, setShowBackToTop] = useState(false);
     const filterRef = useRef(null);
     const loadMoreRef = useRef(null);
     const isMounted = useRef(true);
@@ -47,9 +49,14 @@ export function RenderHome() {
                 setShowFilter(false);
             }
         };
+        const handleScroll = () => {
+            setShowBackToTop(window.scrollY > 100);
+        };
         document.addEventListener('mousedown', handleClickOutside);
+        window.addEventListener('scroll', handleScroll);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('scroll', handleScroll);
             isMounted.current = false;
             debouncedSetSearchQuery.cancel();
         };
@@ -219,15 +226,23 @@ export function RenderHome() {
         debouncedSetSearchQuery(query.trim());
     };
 
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <>
             <title>Holidaze | Home</title>
             <div className="min-h-screen px-8">
                 <div className="flex flex-col justify-between items-center mb-6">
-                    <h1 className='flex flex-col w-full text-[28px] font-light my-6'>
-                        <span className='flex w-full justify-end pr-9'>FIND</span>
+                    <h1 className="flex flex-col w-full text-[28px] font-light my-6">
+                        <span className="flex w-full justify-end pr-9">
+                            FIND
+                        </span>
                         <span>VENUES FOR EVERY</span>
-                        <span className='w-full font-medium pl-3'>OCCASION</span>
+                        <span className="w-full font-medium pl-3">
+                            OCCASION
+                        </span>
                     </h1>
                     <div
                         className="relative flex items-center gap-2 p-2 bg-gray-900 rounded-lg"
@@ -281,6 +296,15 @@ export function RenderHome() {
                         </p>
                     )}
                 </div>
+
+                {showBackToTop && (
+                    <button
+                        onClick={scrollToTop}
+                        className="fixed bottom-7 right-9 bg-gray-900 text-gray-100 p-2 rounded-full z-40 hover:bg-gray-700 md:bottom-16"
+                        aria-label="Scroll to top">
+                        <IoIosArrowUp className="text-xl" />
+                    </button>
+                )}
             </div>
         </>
     );
