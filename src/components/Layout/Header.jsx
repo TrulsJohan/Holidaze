@@ -78,7 +78,7 @@ export function Header() {
                                         ? 'page'
                                         : undefined
                                 }>
-                                Create Post
+                                Create Venue
                             </Link>
                         </div>
                     )}
