@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreateGallery } from '../UI/CreateGallery';
+import { RateVenue } from '../UI/RateVenue';
 
 export function CreateVenueForm({ onSubmit, error }) {
     const {
@@ -18,6 +19,7 @@ export function CreateVenueForm({ onSubmit, error }) {
             media: [{ url: '' }],
             price: '',
             maxGuests: '',
+            rating: 0,
             meta: {
                 wifi: false,
                 parking: false,
@@ -186,6 +188,8 @@ export function CreateVenueForm({ onSubmit, error }) {
                         </p>
                     )}
                 </div>
+
+                <RateVenue register={register} errors={errors} />
 
                 <div>
                     <input
