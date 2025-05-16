@@ -4,14 +4,14 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 
 export const Layout = () => (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-x-hidden w-full max-w-full mx-auto">
         <Background />
-        <div className="relative">
-            <Header />
-            <main className="grow pb-20">
+        <div className="relative w-full max-w-full">
+            <Header className="w-full max-w-full" />
+            <main className="grow pb-20 w-full max-w-full mx-auto">
                 <Outlet />
             </main>
-            <Footer />
+            <Footer className="w-full max-w-full" />
         </div>
     </div>
 );
