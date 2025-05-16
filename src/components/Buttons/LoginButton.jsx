@@ -15,7 +15,7 @@ export function LoginButton({ onClose }) {
             {!token ? (
                 <Link
                     to="/login"
-                    className="py-2 px-4 hover:bg-gray-800 w-full text-center"
+                    className="py-2 px-4 hover:text-gray-400 w-full text-center font-semibold"
                     onClick={onClose}
                     role="menuitem">
                     Sign In
@@ -23,7 +23,7 @@ export function LoginButton({ onClose }) {
             ) : (
                 <button
                     onClick={handleSignOut}
-                    className="py-2 px-4 hover:bg-gray-800 w-full text-center"
+                    className="py-2 px-4 hover:text-gray-400 w-full text-center font-semibold"
                     role="menuitem">
                     Sign Out
                 </button>
