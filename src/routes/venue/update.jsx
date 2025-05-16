@@ -12,6 +12,7 @@ export function RenderUpdateVenue() {
 
     return (
         <div className="min-h-screen px-8 py-12">
+            <title>Holidaze | Update venue</title>
             <div className="max-w-2xl mx-auto">
                 <div className="flex justify-start mb-8">
                     <button

@@ -10,6 +10,7 @@ export function RenderUpdateProfile() {
 
     return (
         <div className="min-h-screen px-8 pt-12">
+            <title>Holidaze | Update profile</title>
             <div className="w-full mx-auto">
                 <div className="flex justify-start mb-8">
                     <button

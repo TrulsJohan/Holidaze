@@ -26,6 +26,7 @@ export function RenderRegister() {
 
     return (
         <div className="min-h-screen flex p-8">
+            <title>Holidaze | Sign Up</title>
             <div className=" flex flex-col gap-6 w-full">
                 <h2 className="text-2xl font-semibold text-gray-900">
                     Sign Up

@@ -65,7 +65,7 @@ export function RenderProfile() {
 
     return (
         <>
-            <title>Holidaze | {profile ? profile.name : 'Profile'}</title>
+            <title>Holidaze | Profile</title>
             <div className="min-h-screen p-8">
                 {loading && (
                     <div className="text-center">
