@@ -6,7 +6,9 @@ export function LoginButton({ onClose }) {
 
     const handleSignOut = () => {
         localStorage.clear();
-        onClose();
+        if (typeof onClose === 'function') {
+            onClose();
+        }
         navigate('/');
     };
 

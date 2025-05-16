@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { HiOutlineMenu } from 'react-icons/hi';
 import { HiOutlineMenuAlt1 } from 'react-icons/hi';
@@ -8,11 +8,31 @@ import logo from '../../assets/HD.svg';
 
 export function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const token = localStorage.getItem('accessToken');
+    const [token, setToken] = useState(localStorage.getItem('accessToken'));
 
     const toggleMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setToken(localStorage.getItem('accessToken'));
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+
+        const interval = setInterval(() => {
+            const newToken = localStorage.getItem('accessToken');
+            if (newToken !== token) {
+                setToken(newToken);
+            }
+        }, 500);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            clearInterval(interval);
+        };
+    }, [token]);
 
     return (
         <header className="sticky top-0 backdrop-blur-sm z-20 w-full max-w-full">
