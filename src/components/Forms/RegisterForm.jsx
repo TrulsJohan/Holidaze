@@ -27,10 +27,10 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
         <>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-6 rounded-lg w-full">
+                className="flex flex-col gap-4 sm:gap-6 rounded-lg w-full max-w-full">
                 <div className="flex flex-col gap-1">
-                    <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
-                        <LuUser className="text-2xl text-gray-500" />
+                    <div className="flex flex-row gap-2 sm:gap-3 w-full p-2 sm:p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
+                        <LuUser className="text-xl sm:text-2xl text-gray-500" />
                         <input
                             id="name"
                             type="text"
@@ -46,11 +46,11 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                                     message: 'Name cannot exceed 50 characters',
                                 },
                             })}
-                            className="w-full text-gray-900 bg-transparent focus:outline-none"
+                            className="w-full text-gray-900 bg-transparent focus:outline-none text-sm sm:text-base"
                             placeholder="Name"
                         />
                     </div>
-                    <div className="flex justify-between text-gray-900 text-xs mt-1">
+                    <div className="flex justify-between text-gray-900 text-xs sm:text-sm mt-1">
                         <span>Enter your name...</span>
                         <span>{nameValue.length}/50</span>
                     </div>
@@ -62,8 +62,8 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
-                        <MdOutlineEmail className="text-2xl text-gray-500" />
+                    <div className="flex flex-row gap-2 sm:gap-3 w-full p-2 sm:p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
+                        <MdOutlineEmail className="text-xl sm:text-2xl text-gray-500" />
                         <input
                             id="email"
                             type="email"
@@ -80,11 +80,11 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                                         'Email cannot exceed 254 characters',
                                 },
                             })}
-                            className="w-full text-gray-900 bg-transparent focus:outline-none"
+                            className="w-full text-gray-900 bg-transparent focus:outline-none text-sm sm:text-base"
                             placeholder="first.last@stud.noroff.no"
                         />
                     </div>
-                    <div className="flex justify-between text-gray-900 text-xs mt-1">
+                    <div className="flex justify-between text-gray-900 text-xs sm:text-sm mt-1">
                         <span>Enter your email...</span>
                         <span>{emailValue.length}/254</span>
                     </div>
@@ -96,8 +96,8 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    <div className="flex flex-row gap-3 w-full p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
-                        <TbLockPassword className="text-2xl text-gray-500" />
+                    <div className="flex flex-row gap-2 sm:gap-3 w-full p-2 sm:p-3 rounded-lg bg-gray-100 border border-gray-700 focus:outline-none focus:border-gray-900">
+                        <TbLockPassword className="text-xl sm:text-2xl text-gray-500" />
                         <input
                             id="password"
                             type="password"
@@ -119,11 +119,11 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                                         'Password cannot exceed 128 characters',
                                 },
                             })}
-                            className="w-full text-gray-900 bg-transparent focus:outline-none"
+                            className="w-full text-gray-900 bg-transparent focus:outline-none text-sm sm:text-base"
                             placeholder="Enter your password"
                         />
                     </div>
-                    <div className="flex justify-between text-gray-900 text-xs mt-1">
+                    <div className="flex justify-between text-gray-900 text-xs sm:text-sm mt-1">
                         <span>Enter your password...</span>
                         <span>{passwordValue.length}/128</span>
                     </div>
@@ -134,28 +134,34 @@ export function RegisterForm({ onSubmit, error, isLoading }) {
                     )}
                 </div>
 
-                <div className="flex flex-row gap-4 items-center">
+                <div className="flex flex-row gap-3 sm:gap-4 items-center">
                     <input
                         id="venueManager"
                         type="checkbox"
                         {...register('venueManager')}
-                        className="h-8 w-8 rounded-lg bg-gray-100 border border-gray-900 focus:outline-none focus:border-gray-900"
+                        className="h-6 w-6 rounded-lg bg-gray-100 border border-gray-900 focus:outline-none focus:border-gray-900"
                     />
-                    <p>Become a Venue Manager and Rent out Venues.</p>
+                    <p className="text-sm sm:text-base">
+                        Become a Venue Manager and Rent out Venues.
+                    </p>
                 </div>
 
-                {error && <p className="text-red-500 text-center">{error}</p>}
+                {error && (
+                    <p className="text-red-500 text-sm sm:text-base text-center">
+                        {error}
+                    </p>
+                )}
 
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-2 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700 disabled:bg-gray-500">
+                    className="w-full py-2 sm:py-3 bg-gray-900 text-gray-50 rounded-lg hover:bg-gray-700 disabled:bg-gray-500 text-sm sm:text-base">
                     {isLoading ? 'Signing Up...' : 'Sign Up'}
                 </button>
             </form>
-            <p className="text-center w-full">
+            <p className="text-center w-full text-sm sm:text-base">
                 Already registered? Sign in{' '}
-                <span className='font-semibold underline'>
+                <span className="font-semibold underline">
                     <Link to={'/login'}>Here</Link>
                 </span>
             </p>

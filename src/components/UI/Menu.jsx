@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LoginButton } from '../Buttons/LoginButton';
+import { LoginButton } from '../Buttons/LoginButton.jsx';
 
 export function Menu({ isMenuOpen, setIsMenuOpen, token }) {
     const location = useLocation();
