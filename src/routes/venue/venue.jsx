@@ -89,7 +89,7 @@ export function RenderVenue() {
 
     return (
         <>
-            <title>Holidaze | {venue ? venue.name : 'Venue'}</title>
+            <title>Holidaze | Venue</title>
             <div className="min-h-screen p-8">
                 <div className="flex justify-start mb-8">
                     <button
