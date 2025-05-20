@@ -14,7 +14,7 @@ export function RenderProfile() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [authError, setAuthError] = useState(null);
-    const [activeTab, setActiveTab] = useState('venues'); // New state for tab toggle
+    const [activeTab, setActiveTab] = useState('venues');
     const name = localStorage.getItem('name');
     const navigate = useNavigate();
     const isVenueManager = localStorage.getItem('venueManager') === 'true';

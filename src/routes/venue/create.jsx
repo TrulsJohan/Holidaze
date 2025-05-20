@@ -9,9 +9,9 @@ export function RenderCreateVenue() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleBack = ()=> {
+    const handleBack = () => {
         navigate('/');
-    }
+    };
 
     const handleSubmit = async (venueData) => {
         setLoading(true);
@@ -30,18 +30,20 @@ export function RenderCreateVenue() {
     };
 
     return (
-        <div className="min-h-screen p-8">
+        <div className="min-h-screen sm:p-6 lg:p-8 w-full min-w-[320px] max-w-full">
             <title>Holidaze | Create venue</title>
             {loading && (
-                <p className="text-gray-900 text-center">Creating venue...</p>
+                <p className="text-gray-900 text-center text-sm sm:text-base">
+                    Creating venue...
+                </p>
             )}
-            <div className="flex justify-start mb-8">
+            <div className="flex justify-start mb-4 sm:mb-6 max-w-md sm:max-w-lg lg:max-w-4xl mx-auto">
                 <button
                     onClick={handleBack}
-                    className="flex items-center gap-1 text-gray-900 text-sm font-semibold hover:underline">
+                    className="flex items-center gap-1 sm:gap-2 text-gray-900 text-sm sm:text-base font-semibold hover:underline">
                     <span>
                         <IoIosArrowBack />
-                    </span>{' '}
+                    </span>
                     Back home
                 </button>
             </div>

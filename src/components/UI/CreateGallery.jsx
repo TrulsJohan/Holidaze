@@ -123,7 +123,7 @@ export function CreateGallery({ register, watch, setValue, errors }) {
                         validImages.map((image) => (
                             <div
                                 key={image.id}
-                                className="w-[240px] h-[240px] flex-shrink-0 snap-center">
+                                className="w-full h-[240px] flex-shrink-0 snap-center">
                                 {imageStatus[image.id] === 'loading' ? (
                                     <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-md">
                                         <span className="text-gray-900">
@@ -151,7 +151,7 @@ export function CreateGallery({ register, watch, setValue, errors }) {
                         <img
                             src="https://placehold.co/400x240?text=No+Image"
                             alt="Placeholder image"
-                            className="w-[240px] h-[240px] object-cover rounded-md flex-shrink-0"
+                            className="w-full h-[240px] object-cover rounded-md flex-shrink-0"
                         />
                     )}
                 </div>
