@@ -90,152 +90,183 @@ export function RenderVenue() {
     return (
         <>
             <title>Holidaze | Venue</title>
-            <div className="min-h-screen p-8">
-                <div className="flex justify-start mb-8">
-                    <button
-                        onClick={handleBack}
-                        className="flex items-center gap-1 text-gray-900 text-sm font-semibold hover:underline">
-                        <span>
-                            <IoIosArrowBack />
-                        </span>{' '}
-                        {isOwner ? <p>Back to Profile</p> : <p>Back home</p>}
-                    </button>
-                </div>
-                {loading && (
-                    <p className="text-gray-900 text-center">
-                        Loading venue...
-                    </p>
-                )}
-                {error && <p className="text-red-500 text-center">{error}</p>}
-                {venue && !loading && !error && (
-                    <div className="flex flex-col gap-6 w-full">
-                        <VenueCard venue={venue} useCarousel={true} />
-                        <div>
+            <div className="min-h-screen p-4 sm:p-6 lg:p-8 w-full min-w-[320px] max-w-full">
+                <div className="max-w-md sm:max-w-xl lg:max-w-4xl mx-auto">
+                    <div className="flex justify-start mb-4 sm:mb-6 lg:mb-8">
+                        <button
+                            onClick={handleBack}
+                            className="flex items-center gap-1 text-gray-900 text-sm sm:text-base font-semibold hover:underline">
+                            <span>
+                                <IoIosArrowBack className="text-base sm:text-lg" />
+                            </span>
                             {isOwner ? (
-                                <div className="flex gap-2 bg-gray-900 p-2 rounded-lg shadow-md">
-                                    <button
-                                        onClick={handleEdit}
-                                        className="w-full text-sm py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200">
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={handleDelete}
-                                        className="w-full text-sm py-2 bg-gray-900 text-gray-50 border border-gray-100 rounded-lg hover:bg-gray-700">
-                                        Delete
-                                    </button>
-                                </div>
+                                <p>Back to Profile</p>
                             ) : (
-                                <CreateBookingForm
-                                    venueId={id}
-                                    onSubmit={handleBookingSubmit}
-                                    bookings={venue.bookings}
-                                    maxGuests={venue.maxGuests}
-                                    isLoggedIn={isLoggedIn}
-                                />
+                                <p>Back home</p>
                             )}
-                            {bookingError && !isOwner && (
-                                <p className="text-red-500 text-center mt-4">
-                                    {bookingError}
-                                </p>
-                            )}
-                        </div>
-                        <div className="my-4">
-                            <h4>Description:</h4>
-                            <p className="text-wrap text-sm text-gray-900 w-full overflow-hidden">
-                                {venue.description}
-                            </p>
-                        </div>
-                        {isOwner && venue.bookings.length > 0 ? (
-                            <div className="flex flex-col gap-4 w-full rounded-lg">
-                                <h4 className="text-gray-900">Bookings</h4>
-                                {venue.bookings.map((booking) => (
-                                    <div
-                                        key={booking.id}
-                                        className="flex flex-col bg-gray-900 p-2 rounded-lg text-gray-50">
-                                        <div className="flex flex-row bg-gray-100 rounded-t-lg border-b border-gray-900 justify-between items-center w-full p-3 gap-6">
-                                            <div className="w-[80px]">
-                                                <img
-                                                    className="rounded-full w-[50px] h-[50px]"
-                                                    src={
-                                                        booking.customer.avatar
-                                                            .url
-                                                    }
-                                                    alt={
-                                                        booking.customer.avatar
-                                                            .alt ||
-                                                        'Owner avatar'
-                                                    }
-                                                />
-                                            </div>
-                                            <div className="flex flex-col w-full text-sm text-gray-900 overflow-hidden">
-                                                <p>{booking.customer.name}</p>
-                                                <p>{booking.customer.email}</p>
-                                            </div>
+                        </button>
+                    </div>
+                    {loading && (
+                        <p className="text-gray-900 text-center text-sm sm:text-base">
+                            Loading venue...
+                        </p>
+                    )}
+                    {error && (
+                        <p className="text-red-500 text-center text-sm sm:text-base">
+                            {error}
+                        </p>
+                    )}
+                    {venue && !loading && !error && (
+                        <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 w-full max-w-full">
+                            <div className="flex flex-col md:flex-row gap-4 sm:gap-6 lg:gap-8">
+                                <div className="w-full md:w-4/7">
+                                    <VenueCard
+                                        venue={venue}
+                                        useCarousel={true}
+                                    />
+                                </div>
+                                <div className="w-full md:w-3/7">
+                                    {isOwner ? (
+                                        <div className="flex gap-2 sm:gap-3 bg-gray-900 p-2 sm:p-3 rounded-lg shadow-md">
+                                            <button
+                                                onClick={handleEdit}
+                                                className="w-full text-sm sm:text-base py-2 sm:py-3 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200">
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={handleDelete}
+                                                className="w-full text-sm sm:text-base py-2 sm:py-3 bg-gray-900 text-gray-50 border border-gray-100 rounded-lg hover:bg-gray-700">
+                                                Delete
+                                            </button>
                                         </div>
-                                        <div className="flex flex-row">
-                                            <div className="flex flex-col bg-gray-100 border-r text-sm text-gray-900 w-full p-2">
-                                                <p className="text-gray-700">
-                                                    From
-                                                </p>
-                                                {formatDate(booking.dateFrom)}
-                                            </div>
-                                            <div className="flex flex-col bg-gray-100 text-sm text-gray-900 w-full p-2">
-                                                <p className="text-gray-700">
-                                                    To
-                                                </p>
-                                                {formatDate(booking.dateTo)}
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-row border-t border-gray-900">
-                                            <div className="flex flex-col bg-gray-100 border-r text-sm rounded-bl-lg text-gray-900 w-full p-2">
-                                                <p className="text-gray-700">
-                                                    Guests
-                                                </p>
-                                                <p className="text-sm">
-                                                    {booking.guests} guest
-                                                    {booking.guests !== 1
-                                                        ? 's'
-                                                        : ''}
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-col bg-gray-100 text-sm rounded-br-lg text-gray-900 w-full p-2">
-                                                <p className="text-gray-700">
-                                                    Booked on
-                                                </p>
-                                                {formatDate(booking.created)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : isOwner && venue.bookings.length === 0 ? (
-                            <div></div>
-                        ) : (
-                            <div className="flex flex-col w-full border border-gray-900 rounded-lg">
-                                <GoogleMap venue={venue} />
-                                <div className="flex flex-row bg-gray-100 rounded-b-lg justify-between items-center w-full p-3 gap-6">
-                                    <div className="w-[80px]">
-                                        <img
-                                            className="rounded-full w-[50px] h-[50px]"
-                                            src={venue.owner.avatar.url}
-                                            alt={
-                                                venue.owner.avatar.alt ||
-                                                'Owner avatar'
-                                            }
+                                    ) : (
+                                        <CreateBookingForm
+                                            venueId={id}
+                                            onSubmit={handleBookingSubmit}
+                                            bookings={venue.bookings}
+                                            maxGuests={venue.maxGuests}
+                                            isLoggedIn={isLoggedIn}
                                         />
-                                    </div>
-                                    <div className="flex flex-col w-full text-xs text-gray-900 overflow-hidden">
-                                        <p>{venue.owner.name}</p>
-                                        <p>{venue.owner.email}</p>
-                                    </div>
+                                    )}
+                                    {bookingError && !isOwner && (
+                                        <p className="text-red-500 text-center text-sm sm:text-base mt-4 sm:mt-6">
+                                            {bookingError}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
-                        )}
-                    </div>
-                )}
-                {!venue && !loading && !error && (
-                    <p className="text-gray-900 text-center">No venue found.</p>
-                )}
+                            <div className="my-4 sm:my-6 lg:my-8">
+                                <h4 className="text-gray-900">
+                                    Description:
+                                </h4>
+                                <p className="text-sm sm:text-base text-gray-900 w-full overflow-hidden">
+                                    {venue.description}
+                                </p>
+                            </div>
+                            {isOwner && venue.bookings.length > 0 ? (
+                                <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-full rounded-lg">
+                                    <h4 className="text-lg sm:text-xl text-gray-900">
+                                        Bookings
+                                    </h4>
+                                    {venue.bookings.map((booking) => (
+                                        <div
+                                            key={booking.id}
+                                            className="flex flex-col bg-gray-900 p-2 sm:p-3 rounded-lg text-gray-50">
+                                            <div className="flex flex-row bg-gray-100 rounded-t-lg border-b border-gray-900 justify-between items-center w-full p-2 sm:p-3 gap-4 sm:gap-6">
+                                                <div className="w-12 sm:w-16">
+                                                    <img
+                                                        className="rounded-full w-10 sm:w-12 h-10 sm:h-12"
+                                                        src={
+                                                            booking.customer
+                                                                .avatar.url
+                                                        }
+                                                        alt={
+                                                            booking.customer
+                                                                .avatar.alt ||
+                                                            'Owner avatar'
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col w-full text-xs sm:text-sm text-gray-900 overflow-hidden">
+                                                    <p>
+                                                        {booking.customer.name}
+                                                    </p>
+                                                    <p>
+                                                        {booking.customer.email}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-row">
+                                                <div className="flex flex-col bg-gray-100 border-r text-xs sm:text-sm text-gray-900 w-full p-2 sm:p-3">
+                                                    <p className="text-gray-700">
+                                                        From
+                                                    </p>
+                                                    {formatDate(
+                                                        booking.dateFrom
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col bg-gray-100 text-xs sm:text-sm text-gray-900 w-full p-2 sm:p-3">
+                                                    <p className="text-gray-700">
+                                                        To
+                                                    </p>
+                                                    {formatDate(booking.dateTo)}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-row border-t border-gray-900">
+                                                <div className="flex flex-col bg-gray-100 border-r text-xs sm:text-sm rounded-bl-lg text-gray-900 w-full p-2 sm:p-3">
+                                                    <p className="text-gray-700">
+                                                        Guests
+                                                    </p>
+                                                    <p>
+                                                        {booking.guests} guest
+                                                        {booking.guests !== 1
+                                                            ? 's'
+                                                            : ''}
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col bg-gray-100 text-xs sm:text-sm rounded-br-lg text-gray-900 w-full p-2 sm:p-3">
+                                                    <p className="text-gray-700">
+                                                        Booked on
+                                                    </p>
+                                                    {formatDate(
+                                                        booking.created
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : isOwner && venue.bookings.length === 0 ? (
+                                <div></div>
+                            ) : (
+                                <div className="flex flex-col w-full max-w-full border border-gray-900 rounded-lg">
+                                    <GoogleMap venue={venue} />
+                                    <div className="flex flex-row bg-gray-100 rounded-b-lg justify-between items-center w-full p-2 sm:p-3 gap-4 sm:gap-6">
+                                        <div className="w-12 sm:w-16">
+                                            <img
+                                                className="rounded-full w-10 sm:w-12 h-10 sm:h-12"
+                                                src={venue.owner.avatar.url}
+                                                alt={
+                                                    venue.owner.avatar.alt ||
+                                                    'Owner avatar'
+                                                }
+                                            />
+                                        </div>
+                                        <div className="flex flex-col w-full text-xs sm:text-sm text-gray-900 overflow-hidden">
+                                            <p>{venue.owner.name}</p>
+                                            <p>{venue.owner.email}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    {!venue && !loading && !error && (
+                        <p className="text-gray-900 text-center text-sm sm:text-base">
+                            No venue found.
+                        </p>
+                    )}
+                </div>
             </div>
         </>
     );
