@@ -23,7 +23,7 @@ export function FilterForm({ onSubmit, onClear }) {
     };
 
     return (
-        <div className="absolute top-18 left-0 bg-gray-900 p-2 rounded-lg z-50 w-[256px]">
+        <div className="absolute w-full top-18 left-0 bg-gray-900 p-2 rounded-lg z-50">
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-4">

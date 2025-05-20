@@ -276,12 +276,14 @@ export function RenderHome() {
                     </p>
                 )}
 
-                <div className="flex flex-col gap-8 mt-8">
-                    {filteredVenues.map((venue) => (
-                        <Link key={venue.id} to={`/venue/${venue.id}`}>
-                            <VenueCard venue={venue} />
-                        </Link>
-                    ))}
+                <div className="w-full max-w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 md:px-20 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-4 sm:mt-6 lg:mt-8 w-full max-w-full mx-auto">
+                        {filteredVenues.map((venue) => (
+                            <Link key={venue.id} to={`/venue/${venue.id}`}>
+                                <VenueCard venue={venue} />
+                            </Link>
+                        ))}
+                    </div>
                 </div>
 
                 <div ref={loadMoreRef} className="h-10">
