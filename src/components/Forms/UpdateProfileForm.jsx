@@ -119,13 +119,13 @@ export function UpdateProfileForm() {
 
     if (!name || authError) {
         return (
-            <div className="flex w-full flex-col gap-4 rounded-lg max-w-3xl mx-auto p-4">
-                <p className="text-red-500 text-center">
+            <div className="flex w-full flex-col gap-4 sm:gap-6 rounded-lg max-w-md sm:max-w-lg mx-auto p-4 sm:p-6">
+                <p className="text-red-500 text-center text-sm sm:text-base">
                     Please log in to update your profile.
                 </p>
                 <button
                     onClick={() => navigate('/login')}
-                    className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700">
+                    className="w-full py-2 sm:py-3 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700 text-sm sm:text-base">
                     Go to Login
                 </button>
             </div>
@@ -133,16 +133,26 @@ export function UpdateProfileForm() {
     }
 
     return (
-        <div className="flex w-full flex-col gap-4 rounded-lg mx-auto">
-            {loading && (
-                <p className="text-gray-900 text-center">Loading profile...</p>
-            )}
-            {error && <p className="text-red-500 text-center">{error}</p>}
-            {success && <p className="text-green-500 text-center">{success}</p>}
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex w-full flex-col gap-4 rounded-lg">
-                <div className="bg-gray-900 flex w-full flex-col gap-6 p-2 rounded-lg">
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full max-w-full">
+            <div className="max-w-md sm:max-w-lg lg:max-w-4xl mx-auto">
+                {loading && (
+                    <p className="text-gray-900 text-center text-sm sm:text-base">
+                        Loading profile...
+                    </p>
+                )}
+                {error && (
+                    <p className="text-red-500 text-center text-sm sm:text-base">
+                        {error}
+                    </p>
+                )}
+                {success && (
+                    <p className="text-green-500 text-center text-sm sm:text-base">
+                        {success}
+                    </p>
+                )}
+                <div className="bg-gray-900 flex w-full flex-col gap-4 sm:gap-6 p-2 sm:p-3 rounded-lg">
                     <div>
                         <textarea
                             {...register('bio', {
@@ -151,16 +161,16 @@ export function UpdateProfileForm() {
                                     message: 'Bio cannot exceed 500 characters',
                                 },
                             })}
-                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                            className="w-full p-2 sm:p-3 bg-gray-100 border border-gray-700 rounded-lg text-sm sm:text-base text-gray-900"
                             placeholder="Tell us more about you"
                             rows="4"
                         />
-                        <div className="flex justify-between text-gray-50 text-xs mt-1">
+                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
                             <span>Enter your bio...</span>
                             <span>{bioValue.length}/500</span>
                         </div>
                         {errors.bio && (
-                            <p className="text-red-500 text-xs mt-1">
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">
                                 {errors.bio.message}
                             </p>
                         )}
@@ -170,10 +180,10 @@ export function UpdateProfileForm() {
                             <img
                                 src={profile.avatar.url}
                                 alt="Avatar"
-                                className="w-full h-[200px] rounded-lg object-cover mb-2"
+                                className="w-full h-40 sm:h-48 rounded-lg object-cover mb-2 sm:mb-3"
                             />
                         ) : (
-                            <p className="text-gray-50 text-sm mb-2">
+                            <p className="text-gray-50 text-sm sm:text-base mb-2 sm:mb-3">
                                 No avatar set
                             </p>
                         )}
@@ -185,14 +195,14 @@ export function UpdateProfileForm() {
                                     message: 'Please enter a valid URL',
                                 },
                             })}
-                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                            className="w-full p-2 sm:p-3 bg-gray-100 border border-gray-700 rounded-lg text-sm sm:text-base text-gray-900"
                             placeholder="Enter avatar URL"
                         />
-                        <div className="flex justify-between text-gray-50 text-xs mt-1">
+                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
                             <span>Enter avatar URL...</span>
                         </div>
                         {errors.avatar?.url && (
-                            <p className="text-red-500 text-xs mt-1">
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">
                                 {errors.avatar.url.message}
                             </p>
                         )}
@@ -202,10 +212,10 @@ export function UpdateProfileForm() {
                             <img
                                 src={profile.banner.url}
                                 alt="Banner"
-                                className="w-full h-[200px] rounded-lg object-cover mb-2"
+                                className="w-full h-40 sm:h-48 rounded-lg object-cover mb-2 sm:mb-3"
                             />
                         ) : (
-                            <p className="text-gray-50 text-sm mb-2">
+                            <p className="text-gray-50 text-sm sm:text-base mb-2 sm:mb-3">
                                 No banner set
                             </p>
                         )}
@@ -217,45 +227,47 @@ export function UpdateProfileForm() {
                                     message: 'Please enter a valid URL',
                                 },
                             })}
-                            className="w-full p-2 bg-gray-100 border border-gray-700 rounded-lg text-gray-900"
+                            className="w-full p-2 sm:p-3 bg-gray-100 border border-gray-700 rounded-lg text-sm sm:text-base text-gray-900"
                             placeholder="Enter banner URL"
                         />
-                        <div className="flex justify-between text-gray-50 text-xs mt-1">
+                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
                             <span>Enter banner URL...</span>
                         </div>
                         {errors.banner?.url && (
-                            <p className="text-red-500 text-xs mt-1">
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">
                                 {errors.banner.url.message}
                             </p>
                         )}
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <label className="flex items-center gap-4 text-gray-50 text-sm">
+                    <div className="flex flex-col gap-2 sm:gap-3">
+                        <label className="flex items-center gap-2 sm:gap-3 text-gray-50 text-sm sm:text-base">
                             <input
                                 type="checkbox"
                                 {...register('venueManager')}
-                                className="h-5 w-5 bg-gray-100 border border-gray-900 rounded"
+                                className="h-4 sm:h-5 w-4 sm:w-5 bg-gray-100 border border-gray-900 rounded"
                             />
-                            <span>Become a Venue Manager to rent out venues.</span>
+                            <span>
+                                Become a Venue Manager to rent out venues.
+                            </span>
                         </label>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 sm:gap-3">
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700 disabled:bg-gray-500">
+                            className="w-full py-2 sm:py-3 bg-gray-50 text-gray-900 rounded-lg hover:bg-gray-700 disabled:bg-gray-500 text-sm sm:text-base">
                             {loading ? 'Updating...' : 'Update'}
                         </button>
                         <button
                             type="button"
                             onClick={handleReset}
                             disabled={loading || !profile}
-                            className="w-full py-2 bg-gray-900 text-gray-50 border border-gray-50 rounded-lg hover:bg-gray-300 disabled:bg-gray-500">
+                            className="w-full py-2 sm:py-3 bg-gray-900 text-gray-50 border border-gray-50 rounded-lg hover:bg-gray-300 disabled:bg-gray-500 text-sm sm:text-base">
                             Reset
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     );
 }
