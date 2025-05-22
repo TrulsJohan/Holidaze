@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { getProfile } from '../../hooks/profile/getProfile';
 import { IoCloseOutline } from 'react-icons/io5';
 import { FaCheck } from 'react-icons/fa6';
 import { VenueCard } from '../../components/Cards/VenueCard';
 import { BookingCard } from '../../components/Cards/BookingCard';
-import { Link } from 'react-router-dom';
 import { MdEdit } from 'react-icons/md';
 import { FiInfo } from 'react-icons/fi';
 
@@ -50,6 +49,14 @@ export function RenderProfile() {
             setError('No user name found. Please log in.');
         }
     }, [name]);
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
 
     if (authError) {
         return (
@@ -101,7 +108,7 @@ export function RenderProfile() {
                                 }}
                                 aria-label={profile.banner.alt}>
                                 <div className="w-full p-2 sm:p-3 flex justify-end">
-                                    <Link to={'/profile/update'}>
+                                    <Link to="/profile/update">
                                         <button className="flex flex-row gap-1 items-center border border-gray-300 bg-gray-50 hover:bg-gray-300 p-1 sm:p-2 rounded-lg">
                                             <MdEdit className="h-4 sm:h-5 w-4 sm:w-5" />
                                         </button>
@@ -230,17 +237,17 @@ export function RenderProfile() {
                                             </span>
                                             Your Bookings
                                         </p>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 w-full max-w-full">
+                                        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 w-full max-w-full">
                                             {profile.bookings.map((booking) => (
                                                 <Link
                                                     key={booking.id}
-                                                    to={`/venue/${booking.venue.id}`}>
+                                                    to={`/venue/${booking.venue.id}`}
+                                                    state={{ from: 'profile' }}>
                                                     <BookingCard
+                                                        booking={booking}
+                                                        formatDate={formatDate}
                                                         venue={booking.venue}
-                                                        dateFrom={
-                                                            booking.dateFrom
-                                                        }
-                                                        dateTo={booking.dateTo}
+                                                        profile={profile}
                                                     />
                                                 </Link>
                                             ))}

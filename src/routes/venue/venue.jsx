@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getVenue } from '../../hooks/venue/getVenue';
 import { CreateBookingForm } from '../../components/Forms/CreateBookingForm';
 import { createBooking } from '../../hooks/booking/createBooking';
 import { deleteVenue } from '../../hooks/venue/deleteVenue';
 import { VenueCard } from '../../components/Cards/VenueCard';
+import { BookingCard } from '../../components/Cards/BookingCard';
 import GoogleMap from '../../components/UI/GoogleMaps';
 import { IoIosArrowBack } from 'react-icons/io';
 
@@ -17,6 +18,7 @@ export function RenderVenue() {
     const [isOwner, setIsOwner] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const checkUserAndVenue = async () => {
@@ -72,11 +74,8 @@ export function RenderVenue() {
     };
 
     const handleBack = () => {
-        if (venue.owner.name === localStorage.getItem('name')) {
-            navigate('/profile');
-        } else {
-            navigate('/');
-        }
+        const fromProfile = location.state?.from === 'profile' || isOwner;
+        navigate(fromProfile ? '/profile' : '/');
     };
 
     const formatDate = (dateString) => {
@@ -99,11 +98,11 @@ export function RenderVenue() {
                             <span>
                                 <IoIosArrowBack className="text-base sm:text-lg" />
                             </span>
-                            {isOwner ? (
-                                <p>Back to Profile</p>
-                            ) : (
-                                <p>Back home</p>
-                            )}
+                            <p>
+                                {location.state?.from === 'profile' || isOwner
+                                    ? 'Back to Profile'
+                                    : 'Back home'}
+                            </p>
                         </button>
                     </div>
                     {loading && (
@@ -156,9 +155,7 @@ export function RenderVenue() {
                                 </div>
                             </div>
                             <div className="my-4 sm:my-6 lg:my-8">
-                                <h4 className="text-gray-900">
-                                    Description:
-                                </h4>
+                                <h4 className="text-gray-900">Description:</h4>
                                 <p className="text-sm sm:text-base text-gray-900 w-full overflow-hidden">
                                     {venue.description}
                                 </p>
@@ -169,71 +166,12 @@ export function RenderVenue() {
                                         Bookings
                                     </h4>
                                     {venue.bookings.map((booking) => (
-                                        <div
+                                        <BookingCard
                                             key={booking.id}
-                                            className="flex flex-col bg-gray-900 p-2 sm:p-3 rounded-lg text-gray-50">
-                                            <div className="flex flex-row bg-gray-100 rounded-t-lg border-b border-gray-900 justify-between items-center w-full p-2 sm:p-3 gap-4 sm:gap-6">
-                                                <div className="w-12 sm:w-16">
-                                                    <img
-                                                        className="rounded-full w-10 sm:w-12 h-10 sm:h-12"
-                                                        src={
-                                                            booking.customer
-                                                                .avatar.url
-                                                        }
-                                                        alt={
-                                                            booking.customer
-                                                                .avatar.alt ||
-                                                            'Owner avatar'
-                                                        }
-                                                    />
-                                                </div>
-                                                <div className="flex flex-col w-full text-xs sm:text-sm text-gray-900 overflow-hidden">
-                                                    <p>
-                                                        {booking.customer.name}
-                                                    </p>
-                                                    <p>
-                                                        {booking.customer.email}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-row">
-                                                <div className="flex flex-col bg-gray-100 border-r text-xs sm:text-sm text-gray-900 w-full p-2 sm:p-3">
-                                                    <p className="text-gray-700">
-                                                        From
-                                                    </p>
-                                                    {formatDate(
-                                                        booking.dateFrom
-                                                    )}
-                                                </div>
-                                                <div className="flex flex-col bg-gray-100 text-xs sm:text-sm text-gray-900 w-full p-2 sm:p-3">
-                                                    <p className="text-gray-700">
-                                                        To
-                                                    </p>
-                                                    {formatDate(booking.dateTo)}
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-row border-t border-gray-900">
-                                                <div className="flex flex-col bg-gray-100 border-r text-xs sm:text-sm rounded-bl-lg text-gray-900 w-full p-2 sm:p-3">
-                                                    <p className="text-gray-700">
-                                                        Guests
-                                                    </p>
-                                                    <p>
-                                                        {booking.guests} guest
-                                                        {booking.guests !== 1
-                                                            ? 's'
-                                                            : ''}
-                                                    </p>
-                                                </div>
-                                                <div className="flex flex-col bg-gray-100 text-xs sm:text-sm rounded-br-lg text-gray-900 w-full p-2 sm:p-3">
-                                                    <p className="text-gray-700">
-                                                        Booked on
-                                                    </p>
-                                                    {formatDate(
-                                                        booking.created
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
+                                            booking={booking}
+                                            formatDate={formatDate}
+                                            venue={venue}
+                                        />
                                     ))}
                                 </div>
                             ) : isOwner && venue.bookings.length === 0 ? (
