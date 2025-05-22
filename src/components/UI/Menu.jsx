@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { LoginButton } from '../Buttons/LoginButton.jsx';
 
-export function Menu({ isMenuOpen, setIsMenuOpen, token }) {
+export function Menu({ isMenuOpen, setIsMenuOpen, token, onVenueClick }) {
     const location = useLocation();
 
     return (
@@ -32,10 +32,9 @@ export function Menu({ isMenuOpen, setIsMenuOpen, token }) {
                         }>
                         Profile
                     </Link>
-                    <Link
-                        to="/venue/create"
+                    <button
+                        onClick={onVenueClick}
                         className="py-2 px-4 hover:bg-gray-800 w-full text-center"
-                        onClick={() => setIsMenuOpen(false)}
                         role="menuitem"
                         aria-current={
                             location.pathname === '/venue/create'
@@ -43,7 +42,7 @@ export function Menu({ isMenuOpen, setIsMenuOpen, token }) {
                                 : undefined
                         }>
                         Venue
-                    </Link>
+                    </button>
                 </div>
             )}
             <LoginButton onClose={() => setIsMenuOpen(false)} />
