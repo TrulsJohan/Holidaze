@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { getAPIKey } from '../../utility/middleware';
 import { API_PROFILE } from '../../utility/constants';
 import { getToken } from '../../utility/middleware';
@@ -26,9 +27,11 @@ export async function updateProfile(name, profileData) {
         }
 
         console.log('Profile updated:', data);
+        toast.success('Profile updated successfully!');
         return data;
     } catch (error) {
         console.error('Fetch error:', error);
+        toast.error(`Failed to update profile: ${error.message}`);
         throw new Error(`Failed to update profile: ${error.message}`);
     }
 }

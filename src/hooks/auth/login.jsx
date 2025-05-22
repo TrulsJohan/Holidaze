@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { API_LOGIN } from '../../utility/constants';
 import { getAPIKey } from '../../utility/middleware';
 
@@ -36,9 +37,11 @@ export async function login({ email, password }) {
         localStorage.setItem('accessToken', data.data.accessToken);
 
         console.log('API success response:', data);
+        toast.success('Login successful!');
         return data;
     } catch (error) {
         console.error('Login error:', error);
+        toast.error(`Failed to login: ${error.message}`);
         throw new Error(`Failed to login: ${error.message}`);
     }
 }

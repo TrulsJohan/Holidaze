@@ -107,9 +107,6 @@ export function CreateBookingForm({
                     Please log in to book this venue
                 </p>
             )}
-            {success && isLoggedIn && (
-                <p className="text-green-500 text-center mb-4">{success}</p>
-            )}
             <form
                 onSubmit={handleSubmit(onFormSubmit)}
                 className="flex flex-col"

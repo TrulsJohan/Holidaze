@@ -191,16 +191,6 @@ export function UpdateProfileForm() {
                         Loading profile...
                     </p>
                 )}
-                {error && (
-                    <p className="text-red-500 text-center text-sm sm:text-base">
-                        {error}
-                    </p>
-                )}
-                {success && (
-                    <p className="text-green-500 text-center text-sm sm:text-base">
-                        {success}
-                    </p>
-                )}
                 <div className="bg-gray-900 flex w-full flex-col gap-4 sm:gap-6 p-2 sm:p-3 rounded-lg">
                     <div>
                         <textarea

@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { API_VENUES } from '../../utility/constants';
 import { getAPIKey } from '../../utility/middleware';
 import { getToken } from '../../utility/middleware';
@@ -33,10 +34,13 @@ export async function createVenue(venueData) {
                     `Could not create venue, status: ${response.status}`
             );
         }
+
         console.log('Venue created:', data);
+        toast.success('Venue created successfully!');
         return data;
     } catch (error) {
         console.error('Fetch error:', error);
+        toast.error(`Failed to create venue: ${error.message}`);
         throw new Error(`Failed to create venue: ${error.message}`);
     }
 }
