@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import { deleteBooking } from '../../hooks/booking/deleteBooking';
+import EventEmitter from 'events';
 
 export function BookingCard({ booking, formatDate, venue, profile }) {
     const calculateTotalPrice = () => {
@@ -15,6 +17,16 @@ export function BookingCard({ booking, formatDate, venue, profile }) {
             url: 'https://via.placeholder.com/150',
             alt: 'Default avatar',
         },
+    };
+
+    const handleCancelBooking = async () => {
+        if (window.confirm('Are you sure you want to cancel this booking?')) {
+            try {
+                await deleteBooking(booking.id);
+                const emitter = new EventEmitter();
+                emitter.emit('bookingDeleted', booking.id);
+            } catch (error) {}
+        }
     };
 
     return (
@@ -54,9 +66,16 @@ export function BookingCard({ booking, formatDate, venue, profile }) {
                     {formatDate(booking.created)}
                 </div>
             </div>
-            <div className='mt-2'>
-                <p className="text-gray-300 mt-2">Total Price</p>
-                <p>${calculateTotalPrice()}</p>
+            <div className="mt-2 flex flex-row justify-between">
+                <div>
+                    <p className="text-gray-300 mt-2">Total Price</p>
+                    <p>${calculateTotalPrice()}</p>
+                </div>
+                <button
+                    onClick={handleCancelBooking}
+                    className="mt-2 w-fit h-fit px-3 py-2 bg-red-500 text-gray-50 rounded hover:bg-gray-600 text-sm sm:text-base">
+                    Cancel
+                </button>
             </div>
         </div>
     );
