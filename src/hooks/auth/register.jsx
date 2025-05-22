@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { API_REGISTER } from '../../utility/constants';
 import { getAPIKey } from '../../utility/middleware';
 
@@ -38,9 +39,11 @@ export async function register({ name, email, password, venueManager }) {
         }
 
         console.log('API success response:', data);
+        toast.success('Registration successful!');
         return data;
     } catch (error) {
         console.error('Registration error:', error);
+        toast.error(`Failed to register: ${error.message}`);
         throw new Error(`Failed to register: ${error.message}`);
     }
 }

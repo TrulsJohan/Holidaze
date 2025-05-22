@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { getAPIKey } from '../../utility/middleware';
 import { API_VENUES } from '../../utility/constants';
 import { getToken } from '../../utility/middleware';
@@ -26,9 +27,11 @@ export async function updateVenue(id, venueData) {
         }
 
         console.log('Venue updated:', data);
+        toast.success('Venue updated successfully!');
         return data;
     } catch (error) {
         console.error('Fetch error:', error);
+        toast.error(`Failed to update venue: ${error.message}`);
         throw new Error(`Failed to update venue: ${error.message}`);
     }
 }

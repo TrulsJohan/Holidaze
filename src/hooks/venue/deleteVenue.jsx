@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { API_VENUES } from '../../utility/constants';
 import { getAPIKey } from '../../utility/middleware';
 import { getToken } from '../../utility/middleware';
@@ -27,10 +28,13 @@ export async function deleteVenue(id) {
                     `Could not delete venue, status: ${response.status}`
             );
         }
+
         console.log('Venue deleted:', id);
+        toast.success('Venue deleted successfully!');
         return true;
     } catch (error) {
         console.error('Fetch error:', error);
+        toast.error(`Failed to delete venue: ${error.message}`);
         throw new Error(`Failed to delete venue: ${error.message}`);
     }
 }

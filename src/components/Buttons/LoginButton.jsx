@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export function LoginButton({ onClose }) {
     const token = localStorage.getItem('accessToken');
@@ -6,6 +7,7 @@ export function LoginButton({ onClose }) {
 
     const handleSignOut = () => {
         localStorage.clear();
+        toast.success('Signed out successfully!');
         if (typeof onClose === 'function') {
             onClose();
         }

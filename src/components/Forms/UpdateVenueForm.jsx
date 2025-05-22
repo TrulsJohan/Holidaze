@@ -259,11 +259,6 @@ export function UpdateVenueForm() {
                         {error}
                     </p>
                 )}
-                {success && (
-                    <p className="text-green-500 text-center text-sm sm:text-base">
-                        {success}
-                    </p>
-                )}
                 <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 md:grid-cols-2">
                     <div className="flex w-full flex-col gap-4 sm:gap-6 p-2 sm:p-3 rounded-lg">
                         <div>

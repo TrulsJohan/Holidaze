@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { API_BOOKINGS } from '../../utility/constants';
 import { getAPIKey } from '../../utility/middleware';
 import { getToken } from '../../utility/middleware';
@@ -33,10 +34,13 @@ export async function createBooking(bookingData) {
                     `Could not create booking, status: ${response.status}`
             );
         }
+
         console.log('Booking created:', data);
+        toast.success('Booking created successfully!');
         return data;
     } catch (error) {
         console.error('Fetch error:', error);
+        toast.error(`Failed to create booking: ${error.message}`);
         throw new Error(`Failed to create booking: ${error.message}`);
     }
 }
