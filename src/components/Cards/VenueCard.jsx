@@ -20,7 +20,7 @@ export function VenueCard({ venue, useCarousel = false }) {
                     <img
                         src={venue.media?.[0]?.url || PlaceholderImage}
                         alt={venue.media?.[0]?.alt || 'Venue image'}
-                        className="w-full h-60 sm:h-72 object-cover rounded-md"
+                        className="w-full h-60 object-cover rounded-md"
                     />
                 )}
             </div>

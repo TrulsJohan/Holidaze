@@ -404,6 +404,11 @@ export function UpdateVenueForm() {
                                     <span>Enter an address...</span>
                                     <span>{addressValue.length}/100</span>
                                 </div>
+                                {errors.location?.address && (
+                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
+                                        {errors.location.address.message}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <input
@@ -433,6 +438,7 @@ export function UpdateVenueForm() {
                                 <input
                                     type="text"
                                     {...register('location.zip', {
+                                        required: 'ZIP code is required',
                                         maxLength: {
                                             value: 20,
                                             message:
@@ -446,6 +452,11 @@ export function UpdateVenueForm() {
                                     <span>Enter a ZIP code...</span>
                                     <span>{zipValue.length}/20</span>
                                 </div>
+                                {errors.location?.zip && (
+                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
+                                        {errors.location.zip.message}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <input
@@ -455,7 +466,7 @@ export function UpdateVenueForm() {
                                         maxLength: {
                                             value: 50,
                                             message:
-                                                'City cannot exceed 50 characters',
+                                                'Country cannot exceed 50 characters',
                                         },
                                     })}
                                     className="w-full p-2 sm:p-3 bg-gray-100 border border-gray-700 rounded-lg text-sm sm:text-base text-gray-900"

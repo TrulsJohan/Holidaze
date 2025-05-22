@@ -242,6 +242,7 @@ export function CreateVenueForm({ onSubmit, error }) {
                                 <input
                                     type="text"
                                     {...register('location.address', {
+                                        required: 'Address is required',
                                         maxLength: {
                                             value: 100,
                                             message:
@@ -255,6 +256,11 @@ export function CreateVenueForm({ onSubmit, error }) {
                                     <span>Enter an address...</span>
                                     <span>{addressValue.length}/100</span>
                                 </div>
+                                {errors.location?.address && (
+                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
+                                        {errors.location.address.message}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <input
@@ -284,6 +290,7 @@ export function CreateVenueForm({ onSubmit, error }) {
                                 <input
                                     type="text"
                                     {...register('location.zip', {
+                                        required: 'ZIP code is required',
                                         maxLength: {
                                             value: 20,
                                             message:
@@ -297,6 +304,11 @@ export function CreateVenueForm({ onSubmit, error }) {
                                     <span>Enter a ZIP code...</span>
                                     <span>{zipValue.length}/20</span>
                                 </div>
+                                {errors.location?.zip && (
+                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
+                                        {errors.location.zip.message}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <input
