@@ -10,6 +10,8 @@ export function UpdateProfileForm() {
     const [error, setError] = useState(null);
     const [authError, setAuthError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [venueManagerError, setVenueManagerError] = useState(null);
+    const [attemptedUncheck, setAttemptedUncheck] = useState(false);
     const name = localStorage.getItem('name');
     const navigate = useNavigate();
 
@@ -19,6 +21,8 @@ export function UpdateProfileForm() {
         formState: { errors },
         reset,
         watch,
+        setValue,
+        clearErrors,
     } = useForm({
         defaultValues: {
             bio: '',
@@ -29,6 +33,7 @@ export function UpdateProfileForm() {
     });
 
     const bioValue = watch('bio') || '';
+    const venueManagerValue = watch('venueManager');
 
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
@@ -58,6 +63,10 @@ export function UpdateProfileForm() {
                     banner: { url: profileData.banner?.url || '' },
                     venueManager: profileData.venueManager || false,
                 });
+                localStorage.setItem(
+                    'venueManager',
+                    String(profileData.venueManager)
+                );
             } catch (error) {
                 console.error('Could not fetch profile:', error.message);
                 setError(error.message || 'Failed to fetch profile');
@@ -69,24 +78,55 @@ export function UpdateProfileForm() {
         fetchProfile();
     }, [name, reset]);
 
+    useEffect(() => {
+        const checkVenues = async () => {
+            if (venueManagerValue === false) {
+                try {
+                    const venuesResponse = await getProfile(name);
+                    if (
+                        venuesResponse.data &&
+                        venuesResponse.data.venues.length > 0
+                    ) {
+                        setVenueManagerError(
+                            'You can’t uncheck because you have venues for rent'
+                        );
+                        setAttemptedUncheck(true);
+                        setTimeout(() => {
+                            setValue('venueManager', true, {
+                                shouldValidate: false,
+                            });
+                            localStorage.setItem('venueManager', 'true');
+                        }, 0);
+                    } else {
+                        setVenueManagerError(null);
+                        setAttemptedUncheck(false);
+                        localStorage.setItem('venueManager', 'false');
+                    }
+                } catch (error) {
+                    console.error('Could not check venues:', error.message);
+                    setVenueManagerError('Failed to verify venues');
+                    setAttemptedUncheck(true);
+                }
+            } else if (!attemptedUncheck) {
+                setVenueManagerError(null);
+                localStorage.setItem('venueManager', 'true');
+            }
+        };
+
+        if (profile) {
+            checkVenues();
+        }
+    }, [venueManagerValue, name, setValue, profile]);
+
     const onSubmit = async (data) => {
         setLoading(true);
         setError(null);
         setSuccess(null);
+        setVenueManagerError(null);
+        setAttemptedUncheck(false);
+        clearErrors();
 
         try {
-            if (!data.venueManager) {
-                const venuesResponse = await getProfile(name);
-                if (
-                    venuesResponse.data &&
-                    venuesResponse.data.venues.length > 0
-                ) {
-                    throw new Error(
-                        'Cannot disable Venue Manager while you have active venues'
-                    );
-                }
-            }
-
             await updateProfile(name, data);
             setSuccess('Profile updated successfully!');
             const response = await getProfile(name);
@@ -98,6 +138,10 @@ export function UpdateProfileForm() {
                 banner: { url: profileData.banner?.url || '' },
                 venueManager: profileData.venueManager || false,
             });
+            localStorage.setItem(
+                'venueManager',
+                String(profileData.venueManager)
+            );
         } catch (error) {
             console.error('Could not update profile:', error.message);
             setError(error.message || 'Failed to update profile');
@@ -113,8 +157,15 @@ export function UpdateProfileForm() {
             banner: { url: profile?.banner?.url || '' },
             venueManager: profile?.venueManager || false,
         });
+        clearErrors();
         setError(null);
         setSuccess(null);
+        setVenueManagerError(null);
+        setAttemptedUncheck(false);
+        localStorage.setItem(
+            'venueManager',
+            String(profile?.venueManager || false)
+        );
     };
 
     if (!name || authError) {
@@ -133,9 +184,7 @@ export function UpdateProfileForm() {
     }
 
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-full max-w-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-full">
             <div className="max-w-md sm:max-w-lg lg:max-w-4xl mx-auto">
                 {loading && (
                     <p className="text-gray-900 text-center text-sm sm:text-base">
@@ -156,6 +205,7 @@ export function UpdateProfileForm() {
                     <div>
                         <textarea
                             {...register('bio', {
+                                required: 'Bio is required',
                                 maxLength: {
                                     value: 500,
                                     message: 'Bio cannot exceed 500 characters',
@@ -165,15 +215,15 @@ export function UpdateProfileForm() {
                             placeholder="Tell us more about you"
                             rows="4"
                         />
-                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
-                            <span>Enter your bio...</span>
-                            <span>{bioValue.length}/500</span>
-                        </div>
                         {errors.bio && (
                             <p className="text-red-500 text-xs sm:text-sm mt-1">
                                 {errors.bio.message}
                             </p>
                         )}
+                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
+                            <span>Enter your bio...</span>
+                            <span>{bioValue.length}/500</span>
+                        </div>
                     </div>
                     <div>
                         {profile?.avatar?.url ? (
@@ -190,6 +240,7 @@ export function UpdateProfileForm() {
                         <input
                             type="url"
                             {...register('avatar.url', {
+                                required: 'Avatar URL is required',
                                 pattern: {
                                     value: /^https?:\/\/.+/i,
                                     message: 'Please enter a valid URL',
@@ -198,17 +249,17 @@ export function UpdateProfileForm() {
                             className="w-full p-2 sm:p-3 bg-gray-100 border border-gray-700 rounded-lg text-sm sm:text-base text-gray-900"
                             placeholder="Enter avatar URL"
                         />
-                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
-                            <span>Enter avatar URL...</span>
-                        </div>
                         {errors.avatar?.url && (
                             <p className="text-red-500 text-xs sm:text-sm mt-1">
                                 {errors.avatar.url.message}
                             </p>
                         )}
+                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
+                            <span>Enter avatar URL...</span>
+                        </div>
                     </div>
                     <div>
-                        {profile?.banner?.url ? (
+                        {profile?.avatar?.url ? (
                             <img
                                 src={profile.banner.url}
                                 alt="Banner"
@@ -222,6 +273,7 @@ export function UpdateProfileForm() {
                         <input
                             type="url"
                             {...register('banner.url', {
+                                required: 'Banner URL is required',
                                 pattern: {
                                     value: /^https?:\/\/.+/i,
                                     message: 'Please enter a valid URL',
@@ -230,14 +282,14 @@ export function UpdateProfileForm() {
                             className="w-full p-2 sm:p-3 bg-gray-100 border border-gray-700 rounded-lg text-sm sm:text-base text-gray-900"
                             placeholder="Enter banner URL"
                         />
-                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
-                            <span>Enter banner URL...</span>
-                        </div>
                         {errors.banner?.url && (
                             <p className="text-red-500 text-xs sm:text-sm mt-1">
                                 {errors.banner.url.message}
                             </p>
                         )}
+                        <div className="flex justify-between text-gray-50 text-xs sm:text-sm mt-1">
+                            <span>Enter banner URL...</span>
+                        </div>
                     </div>
                     <div className="flex flex-col gap-2 sm:gap-3">
                         <label className="flex items-center gap-2 sm:gap-3 text-gray-50 text-sm sm:text-base">
@@ -250,6 +302,16 @@ export function UpdateProfileForm() {
                                 Become a Venue Manager to rent out venues.
                             </span>
                         </label>
+                        {errors.venueManager && (
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">
+                                {errors.venueManager.message}
+                            </p>
+                        )}
+                        {venueManagerError && (
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">
+                                {venueManagerError}
+                            </p>
+                        )}
                     </div>
                     <div className="flex gap-2 sm:gap-3">
                         <button

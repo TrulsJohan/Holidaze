@@ -272,7 +272,7 @@ export function RenderHome() {
 
                 {filteredVenues.length === 0 && !loading && !error && (
                     <p className="text-gray-900 text-center">
-                        No venues available.
+                        No venues found.
                     </p>
                 )}
 
