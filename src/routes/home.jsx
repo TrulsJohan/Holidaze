@@ -24,7 +24,7 @@ export function RenderHome() {
     const loadMoreRef = useRef(null);
     const isMounted = useRef(true);
     const seenVenueIds = useRef(new Set());
-    const limit = 20;
+    const limit = 100;
 
     const debouncedSetSearchQuery = useRef(
         debounce((query) => {

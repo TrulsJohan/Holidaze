@@ -1,7 +1,7 @@
 import { API_VENUES } from '../../utility/constants';
 import { getAPIKey } from '../../utility/middleware';
 
-export async function searchVenues(page = 1, limit = 20, searchQuery) {
+export async function searchVenues(page = 1, limit = 100, searchQuery) {
     if (limit > 100) {
         throw new Error('Limit cannot exceed 100');
     }
