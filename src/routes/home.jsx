@@ -233,19 +233,22 @@ export function RenderHome() {
     return (
         <>
             <title>Holidaze | Home</title>
-            <div className="min-h-screen px-8">
-                <div className="flex flex-col justify-between items-center mb-6">
-                    <h1 className="flex flex-col w-full text-[28px] font-light my-6">
-                        <span className="flex w-full justify-end pr-9">
-                            FIND
-                        </span>
-                        <span>VENUES FOR EVERY</span>
-                        <span className="w-full font-medium pl-3">
-                            OCCASION
-                        </span>
+            <div className="min-h-screen">
+                <section
+                    className="relative bg-cover bg-center bg-no-repeat h-[50vh] sm:h-[70vh] flex flex-col items-center justify-center text-center bg-gray-900 px-4 sm:px-0"
+                    style={{
+                        backgroundImage:
+                            "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')",
+                    }}>
+                    <h1 className="text-3xl sm:text-5xl md:text-6xl font-semibold text-gray-50 mb-4">
+                        Discover Your Perfect Venue
                     </h1>
+                    <p className="text-base sm:text-xl text-gray-200 mb-6 max-w-2xl">
+                        Book unique stays for every occasion with Holidaze –
+                        from cozy cabins to vibrant city escapes.
+                    </p>
                     <div
-                        className="relative flex items-center gap-2 p-2 bg-gray-900 rounded-lg"
+                        className="relative flex items-center gap-2 p-2 bg-gray-900 rounded-lg w-full max-w-sm sm:max-w-lg"
                         ref={filterRef}>
                         <SearchForm onChange={handleSearchChange} />
                         <button
@@ -261,7 +264,7 @@ export function RenderHome() {
                             />
                         )}
                     </div>
-                </div>
+                </section>
 
                 {loading && venues.length === 0 && (
                     <p className="text-gray-900 text-center">
@@ -277,7 +280,7 @@ export function RenderHome() {
                 )}
 
                 <div className="w-full max-w-full">
-                    <div className="grid grid-cols-1 md:grid-cols-2 md:px-20 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-4 sm:mt-6 lg:mt-8 w-full max-w-full mx-auto">
+                    <div className="grid grid-cols-1 px-4 md:grid-cols-2 md:px-20 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-4 sm:mt-6 lg:mt-8 w-full max-w-full mx-auto">
                         {filteredVenues.map((venue) => (
                             <Link key={venue.id} to={`/venue/${venue.id}`}>
                                 <VenueCard venue={venue} />

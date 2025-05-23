@@ -29,7 +29,7 @@ export function FilterForm({ onSubmit, onClear }) {
                 className="flex flex-col gap-4">
                 <div className="flex flex-col">
                     <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-t-lg border p-2 items-center">
-                        <label className="text-gray-500 w-full">From</label>
+                        <label className="text-gray-500 w-full text-left">From</label>
                         <input
                             type="date"
                             {...register('dateFrom')}
@@ -37,7 +37,7 @@ export function FilterForm({ onSubmit, onClear }) {
                         />
                     </div>
                     <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-b-lg border p-2 items-center">
-                        <label className="text-gray-500 w-full">To</label>
+                        <label className="text-gray-500 w-full text-left">To</label>
                         <input
                             type="date"
                             {...register('dateTo')}
@@ -46,9 +46,9 @@ export function FilterForm({ onSubmit, onClear }) {
                     </div>
                 </div>
 
-                <div className="flex flex-row">
-                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-l-lg border p-2 items-center">
-                        <label className="text-gray-500 w-full">From</label>
+                <div className="flex flex-row w-full">
+                    <div className="flex flex-col w-full gap-2 text-sm bg-gray-50 rounded-l-lg border p-2 items-center">
+                        <label className="text-gray-500 w-full text-left">From</label>
                         <input
                             type="number"
                             min="0"
@@ -57,8 +57,8 @@ export function FilterForm({ onSubmit, onClear }) {
                             placeholder="Min price"
                         />
                     </div>
-                    <div className="flex flex-col gap-2 text-sm bg-gray-50 rounded-r-lg border p-2 items-center">
-                        <label className="text-gray-500 w-full">To</label>
+                    <div className="flex flex-col w-full gap-2 text-sm bg-gray-50 rounded-r-lg border p-2 items-center">
+                        <label className="text-gray-500 w-full text-left">To</label>
                         <input
                             type="number"
                             min="0"
